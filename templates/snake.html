@@ -4,16 +4,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
-        <title>Home</title>
+        <title>Snake</title>
         <link rel="stylesheet" href="/static/styles.css">
+        <script src="/static/js/snake.js"></script>
     </head>
     <body>
         <!-- Navigation Bar -->
         <header>
             <div class="nav-bar">
                 <ul>
-                    <li><a class="nav-bar-active" href="/"><img src="/static/icons/home-icon-silhouette-svgrepo-com.svg"></a></li>
-                    <li><a href="/snake">Snake</a></li>
+                    <li><a href="/"><img src="/static/icons/home-icon-silhouette-svgrepo-com.svg"></a></li>
+                    <li><a class="nav-bar-active" href="/snake">Snake</a></li>
                     <li><a href="/">TBA</a></li>
                     <li><a href="/">TBA</a></li>
                 </ul>
@@ -22,7 +23,16 @@
 
         <!-- Body -->
         <div class="page-title">
-            <h1>HOME PAGE</h1>
+            <h1>Snake</h1>
+        </div>
+
+        <hr class="horizontal-divider">
+
+        <div class="snake-game">
+            <canvas class="snake-game-board" id="snake-board"></canvas>
+            <div class="snake-game-info">
+                <h1 id="snake-score"></h1>
+            </div>
         </div>
 
         <!-- Footer -->
