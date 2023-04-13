@@ -30,6 +30,11 @@ var gameOver;
 var score;
 var updateGameInteralId;
 
+// Sound effects
+var soundSetting = "Off";
+var gameOverSound = new Audio("/static/sounds/gameover-sound.mp3");
+var eatSound = new Audio("/static/sounds/eat-sound.mp3");
+var clickSound = new Audio("/static/sounds/click-sound.mp3");
 
 window.onload = startGame;
 
@@ -146,6 +151,9 @@ function placeFood() {
 function updateFood() {
     // Check if the snake ate the food and updates food position if needed
     if (snakeX == foodX && snakeY == foodY) {
+        if (soundSetting == "On") {
+            eatSound.play();
+        }
         score++;
         if (specialFood) {
             score += 2;
@@ -167,12 +175,18 @@ function checkGameOver() {
     console.log("snakeX= " + snakeX);
     console.log("snakeY= " + snakeY);
     if (snakeX < 0 || snakeX >= COLS*BLOCKSIZE || snakeY < 0 || snakeY >= ROWS*BLOCKSIZE) {
+        if (soundSetting == "On") {
+            gameOverSound.play();
+        }
         gameOver = true;
     }
 
     // Check if snake hit own tail
     for (let i = 0; i < snakeBody.length; i++) {
         if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]) {
+            if (soundSetting == "On") {
+                gameOverSound.play();
+            }
             gameOver = true;
         }
     }
@@ -226,7 +240,23 @@ function toggleFoodSetting() {
     updateButtons();
 }
 
+function toggleSoundSetting() {
+    if (soundSetting == "Off") {
+        soundSetting = "On";
+    }
+    else {
+        soundSetting = "Off"
+    }
+    updateButtons();
+}
+
 function updateButtons() {
+    if (soundSetting == "On") {
+        clickSound.pause();
+        clickSound.currentTime = 0;
+        clickSound.play();
+    }
     document.getElementById("snake-speed-button").innerHTML = "Game Speed: " + speedSetting;
     document.getElementById("snake-food-button").innerHTML = "Special Food: " + specialFoodSetting;
+    document.getElementById("snake-sound-button").innerHTML = "Sound Effects: " + soundSetting;
 }
