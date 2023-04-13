@@ -1,9 +1,9 @@
 /* Implements Snake Game */
 
 // Board variables
-var blocksize = 25;
-var rows = 20;
-var cols = 20;
+const BLOCKSIZE = 25;
+const ROWS = 20;
+const COLS = 20;
 var board;
 var context;
 
@@ -13,12 +13,19 @@ var snakeY;
 var velocityX;
 var velocityY;
 var snakeBody;
+const SNAKE_COLOR = "lime";
 
 // Food variables
 var foodX;
 var foodY;
+var specialFood = false;
+var specialFoodSetting = "Off";
+const REGULAR_FOOD_COLOR = "red";
+const SPECIAL_FOOD_COLOR = "yellow";
 
 // Game variables
+var speed = 75;
+var speedSetting = "Normal"
 var gameOver;
 var score;
 var updateGameInteralId;
@@ -29,19 +36,20 @@ window.onload = startGame;
 function startGame() {
     // Initialise new game
     board = document.getElementById("snake-board");
-    board.height = rows * blocksize;
-    board.width = cols * blocksize;
+    board.height = ROWS * BLOCKSIZE;
+    board.width = COLS * BLOCKSIZE;
     context = board.getContext("2d");
     gameOver = false;
     score = 0;
     placeFood();
-    snakeX = blocksize * 5;
-    snakeY = blocksize * 5;
+    snakeX = BLOCKSIZE * 5;
+    snakeY = BLOCKSIZE * 5;
     velocityX = 0;
     velocityY = 0;
     snakeBody = []
+    updateButtons();
     document.addEventListener("keyup", respondKeyPress);
-    updateGameInteralId = setInterval(update, 100);
+    updateGameInteralId = setInterval(update, speed);
 }
 
 function update() {
@@ -111,39 +119,54 @@ function updateSnake() {
     if (snakeBody.length) {
         snakeBody[0] = [snakeX, snakeY]
     }
-    snakeX += velocityX * blocksize;
-    snakeY += velocityY * blocksize;
+    snakeX += velocityX * BLOCKSIZE;
+    snakeY += velocityY * BLOCKSIZE;
 
     // Draws snake
-    context.fillStyle = "lime";
-    context.fillRect(snakeX, snakeY, blocksize, blocksize);
+    context.fillStyle = SNAKE_COLOR;
+    context.fillRect(snakeX, snakeY, BLOCKSIZE, BLOCKSIZE);
     for (let i = 0; i < snakeBody.length; i++) {
-        context.fillRect(snakeBody[i][0], snakeBody[i][1], blocksize, blocksize)
+        context.fillRect(snakeBody[i][0], snakeBody[i][1], BLOCKSIZE, BLOCKSIZE)
     }
 }
 
 function placeFood() {
     // Generates food at random coordinates
-    foodX = Math.floor(Math.random() * cols) * blocksize;
-    foodY = Math.floor(Math.random() * rows) * blocksize;
+    foodX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
+    foodY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
+    // Determines if food is special
+    if (Math.floor(Math.random()*10) >= 9 && specialFoodSetting == "On") {
+        specialFood = true;
+    }
+    else {
+        specialFood = false;
+    }
 }
 
 function updateFood() {
     // Check if the snake ate the food and updates food position if needed
     if (snakeX == foodX && snakeY == foodY) {
+        score++;
+        if (specialFood) {
+            score += 2;
+        }
         snakeBody.push([snakeX - velocityX, snakeY - velocityY])
         placeFood();
-        score++;
     }
 
     // Draws food
-    context.fillStyle = "red";
-    context.fillRect(foodX, foodY, blocksize, blocksize);
+    context.fillStyle = REGULAR_FOOD_COLOR;
+    if (specialFood) {
+        context.fillStyle = SPECIAL_FOOD_COLOR;
+    }
+    context.fillRect(foodX, foodY, BLOCKSIZE, BLOCKSIZE);
 }
 
 function checkGameOver() {
     // Check if snake hit board boundary
-    if (snakeX < 0 || snakeX > cols*blocksize || snakeY < 0 || snakeY > rows.blocksize) {
+    console.log("snakeX= " + snakeX);
+    console.log("snakeY= " + snakeY);
+    if (snakeX < 0 || snakeX >= COLS*BLOCKSIZE || snakeY < 0 || snakeY >= ROWS*BLOCKSIZE) {
         gameOver = true;
     }
 
@@ -172,4 +195,38 @@ function updateScore() {
     context.fillStyle = "white";
     context.textAlign = "left";
     context.fillText("Score: " + score, 10, 20);
+}
+
+function toggleSpeedSetting() {
+    // Toggle speed to next speed (slow-normal-fast)
+    if (speedSetting == "Slow") {
+        speedSetting = "Normal";
+        speed = 75;
+    }
+    else if (speedSetting == "Normal") {
+        speedSetting = "Fast";
+        speed = 50;
+    }
+    else if (speedSetting == "Fast") {
+        speedSetting = "Slow";
+        speed = 100;
+    }
+    clearInterval(updateGameInteralId);
+    updateGameInteralId = setInterval(update, speed);
+    updateButtons();
+}
+
+function toggleFoodSetting() {
+    if (specialFoodSetting == "Off") {
+        specialFoodSetting = "On";
+    }
+    else {
+        specialFoodSetting = "Off"
+    }
+    updateButtons();
+}
+
+function updateButtons() {
+    document.getElementById("snake-speed-button").innerHTML = "Game Speed: " + speedSetting;
+    document.getElementById("snake-food-button").innerHTML = "Special Food: " + specialFoodSetting;
 }

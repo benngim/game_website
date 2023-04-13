@@ -4,7 +4,7 @@
 /* Global Variables */
 :root {
     /* Colors */
-    --navbar-text-color: #e8e8e8;
+    --navbar-text-color: #000;
     --navbar-text-color-hover: #c0c0c0;
     --reg-text-color: #000;
     --primary-color: #00a9bf;
@@ -96,8 +96,8 @@ footer {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 /* Homepage Classes */
@@ -121,7 +121,31 @@ footer {
 .snake-game-info {
     display: inline;
     float: right;
-    text-align: left;
+    text-align: center;
     width: 49%;
     font-size: large;
+}
+
+.snake-button-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.snake-button {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color-border);
+    font-size: 24px;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 10px;
+    text-decoration: none;
+    width: 60%;
+}
+
+.snake-button:hover {
+    cursor: pointer;
+    background-color: var(--primary-color-hover);
+    color: var(--navbar-text-color-hover);
 }
