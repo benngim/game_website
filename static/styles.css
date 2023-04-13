@@ -1,0 +1,68 @@
+/* Style Sheet */
+
+
+/* Global Variables */
+:root {
+    /* Colors */
+    --navbar-text-color: #e8e8e8;
+    --navbar-text-color-hover: #c0c0c0;
+    --reg-text-color: #000;
+    --primary-color: #00a0a0;
+    --primary-color-hover: #008080;
+    --primary-color-border: #004040;
+    --background-color: #141414;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    background-color: var(--background-color);
+}
+
+/* Navbar Classes */
+.nav-bar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--primary-color);
+}
+
+.nav-bar li {
+    float: left;
+    border-right: 2px solid var(--primary-color-border);
+}
+
+.nav-bar li a {
+    display: inline-block;
+    color: var(--navbar-text-color);
+    text-align: center;
+    padding: 20px 30px;
+    text-decoration: none;
+    font-size: large;
+    height: 20px;
+}
+
+.nav-bar li a:hover {
+    background-color: var(--primary-color-hover);
+    color: var(--navbar-text-color-hover);
+}
+
+.nav-bar img {
+    max-height: 100%;
+}
+
+/* Homepage Classes */
+.home-page-title {
+    margin-top: 2%;
+    text-align: center;
+    font-size: xx-large;
+    color: var(--reg-text-color);
+}
