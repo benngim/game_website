@@ -87,6 +87,17 @@ footer {
     width: 85%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.hidden-divider {
+    border: none;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* Homepage Classes */
@@ -110,7 +121,7 @@ footer {
 .snake-game-info {
     display: inline;
     float: right;
-    text-align: center;
+    text-align: left;
     width: 49%;
     font-size: large;
 }
