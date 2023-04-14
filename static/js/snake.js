@@ -30,6 +30,12 @@ var gameOver;
 var score;
 var updateGameInteralId;
 
+// Enemy variables
+var enemyOn = false;
+var enemySetting = "Off";
+var enemies;
+const ENEMY_COLOR = "blue";
+
 // Sound effects
 var soundSetting = "Off";
 var gameOverSound = new Audio("/static/sounds/gameover-sound.mp3");
@@ -56,11 +62,12 @@ function startGame() {
     gameOver = false;
     score = 0;
     placeFood();
+    placeEnemies();
     snakeX = BLOCKSIZE * 5;
     snakeY = BLOCKSIZE * 5;
     velocityX = 0;
     velocityY = 0;
-    snakeBody = []
+    snakeBody = [];
     updateButtons();
     document.addEventListener("keyup", respondKeyPress);
     updateGameInteralId = setInterval(update, speed);
@@ -80,8 +87,14 @@ function update() {
     // Snake
     updateSnake();
 
+    // Check if snake ate food
+    checkFoodCollision();
+
     // Food
     updateFood();
+
+    // Enemies
+    updateEnemies();
 
     // Score
     updateScore();
@@ -157,8 +170,8 @@ function placeFood() {
     }
 }
 
-function updateFood() {
-    // Check if the snake ate the food and updates food position if needed
+function checkFoodCollision() {
+    // Check if the snake ate the food
     if (snakeX == foodX && snakeY == foodY) {
         if (soundSetting == "On") {
             eatSound.play();
@@ -169,14 +182,49 @@ function updateFood() {
         }
         snakeBody.push([snakeX - velocityX, snakeY - velocityY])
         placeFood();
+        placeEnemies();
     }
+}
 
+function updateFood() {
     // Draws food
     context.fillStyle = REGULAR_FOOD_COLOR;
     if (specialFood) {
         context.fillStyle = SPECIAL_FOOD_COLOR;
     }
-    context.fillRect(foodX, foodY, BLOCKSIZE, BLOCKSIZE);
+    context.beginPath();
+    context.arc(foodX+BLOCKSIZE/2, foodY+BLOCKSIZE/2, BLOCKSIZE/2, 0, 2*Math.PI);
+    context.fill();
+}
+
+function placeEnemies() {
+    enemies = [];
+
+    // Enemies are turned off
+    if (!enemyOn) {
+        return;
+    }
+
+    // Generates three enemies at random coordinates
+    for (let i = 0; i < 3; i++) {
+        var enemyX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
+        var enemyY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
+
+        // Ensure enemy is not spawned on food location or in path of snake head
+        while ((enemyX == foodX && enemyY == foodY) || (enemyX == snakeX) || (enemyY == snakeY)) {
+            enemyX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
+            enemyY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
+        }
+        enemies.push([enemyX, enemyY]);
+    }
+}
+
+function updateEnemies() {
+    // Draws enemies
+    context.fillStyle = ENEMY_COLOR;
+    for (let i = 0; i < enemies.length; i++) {
+        context.fillRect(enemies[i][0], enemies[i][1], BLOCKSIZE, BLOCKSIZE);
+    }
 }
 
 function checkGameOver() {
@@ -193,6 +241,16 @@ function checkGameOver() {
     // Check if snake hit own tail
     for (let i = 0; i < snakeBody.length; i++) {
         if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]) {
+            if (soundSetting == "On") {
+                gameOverSound.play();
+            }
+            gameOver = true;
+        }
+    }
+
+    // Check if snake hit enemy
+    for (let i = 0; i < enemies.length; i++) {
+        if (snakeX == enemies[i][0] && snakeY == enemies[i][1]) {
             if (soundSetting == "On") {
                 gameOverSound.play();
             }
@@ -246,6 +304,19 @@ function toggleFoodSetting() {
     else {
         specialFoodSetting = "Off"
     }
+    updateButtons();
+}
+
+function toggleEnemySetting() {
+    if (enemyOn) {
+        enemyOn = false;
+        enemySetting = "Off";
+    }
+    else {
+        enemyOn = true;
+        enemySetting = "On";
+    }
+    placeEnemies();
     updateButtons();
 }
 
@@ -310,6 +381,7 @@ function updateButtons() {
     }
     document.getElementById("snake-speed-button").innerHTML = "Game Speed: " + speedSetting;
     document.getElementById("snake-food-button").innerHTML = "Special Food: " + specialFoodSetting;
+    document.getElementById("snake-enemy-button").innerHTML = "Enemies: " + enemySetting;
     document.getElementById("snake-sound-button").innerHTML = "Sound Effects: " + soundSetting;
     if (bgmSetting == 0) {
         document.getElementById("snake-bgm-button").innerHTML = "BGM: Off";
