@@ -13,15 +13,12 @@ var snakeY;
 var velocityX;
 var velocityY;
 var snakeBody;
-const SNAKE_COLOR = "lime";
 
 // Food variables
 var foodX;
 var foodY;
 var specialFood = false;
 var specialFoodSetting = "Off";
-const REGULAR_FOOD_COLOR = "red";
-const SPECIAL_FOOD_COLOR = "yellow";
 
 // Game variables
 var speed = 75;
@@ -34,7 +31,6 @@ var updateGameInteralId;
 var enemyOn = false;
 var enemySetting = "Off";
 var enemies;
-const ENEMY_COLOR = "blue";
 
 // Sound effects
 var soundSetting = "Off";
@@ -50,6 +46,15 @@ var bgmSetting = 0;
 var bgm = new Audio();
 bgm.loop = true;
 bgm.volume = 0.5;
+
+// Color theme
+var color_theme = 1;
+var snake_color= "lime";
+var regular_food_color = "red";
+var special_food_color = "yellow";
+var enemy_color = "steelblue";
+var board_color = "black";
+var score_color = "white";
 
 window.onload = startGame;
 
@@ -75,7 +80,7 @@ function startGame() {
 
 function update() {
     // Draws board
-    context.fillStyle = "black";
+    context.fillStyle = board_color;
     context.fillRect(0, 0, board.width, board.height);
 
     // Gameover
@@ -150,7 +155,7 @@ function updateSnake() {
     snakeY += velocityY * BLOCKSIZE;
 
     // Draws snake
-    context.fillStyle = SNAKE_COLOR;
+    context.fillStyle = snake_color;
     context.fillRect(snakeX, snakeY, BLOCKSIZE, BLOCKSIZE);
     for (let i = 0; i < snakeBody.length; i++) {
         context.fillRect(snakeBody[i][0], snakeBody[i][1], BLOCKSIZE, BLOCKSIZE)
@@ -188,9 +193,9 @@ function checkFoodCollision() {
 
 function updateFood() {
     // Draws food
-    context.fillStyle = REGULAR_FOOD_COLOR;
+    context.fillStyle = regular_food_color;
     if (specialFood) {
-        context.fillStyle = SPECIAL_FOOD_COLOR;
+        context.fillStyle = special_food_color;
     }
     context.beginPath();
     context.arc(foodX+BLOCKSIZE/2, foodY+BLOCKSIZE/2, BLOCKSIZE/2, 0, 2*Math.PI);
@@ -221,7 +226,7 @@ function placeEnemies() {
 
 function updateEnemies() {
     // Draws enemies
-    context.fillStyle = ENEMY_COLOR;
+    context.fillStyle = enemy_color;
     for (let i = 0; i < enemies.length; i++) {
         context.fillRect(enemies[i][0], enemies[i][1], BLOCKSIZE, BLOCKSIZE);
     }
@@ -262,7 +267,7 @@ function checkGameOver() {
 function gameOverState() {
     // Display gameover screen and stop running the game
     context.font = "64px Courier New";
-    context.fillStyle = "red";
+    context.fillStyle = regular_food_color;
     context.textAlign = "center";
     context.fillText("Game Over", board.width/2, board.height/2);
     context.font = "24px Courier New";
@@ -273,7 +278,7 @@ function gameOverState() {
 
 function updateScore() {
     context.font = "15px Courier New";
-    context.fillStyle = "white";
+    context.fillStyle = score_color;
     context.textAlign = "left";
     context.fillText("Score: " + score, 10, 20);
 }
@@ -317,6 +322,47 @@ function toggleEnemySetting() {
         enemySetting = "On";
     }
     placeEnemies();
+    updateButtons();
+}
+
+function toggleColorTheme() {
+    if (color_theme == 1) {
+        color_theme = 2;
+        snake_color = "darkmagenta";
+        regular_food_color = "gold";
+        special_food_color = "cyan";
+        enemy_color = "teal";
+        board_color = "black";
+        score_color = "white";
+    }
+    else if (color_theme == 2) {
+        color_theme = 3;
+        snake_color = "lightgray";
+        regular_food_color = "mediumaquamarine";
+        special_food_color = "darkslategray";
+        enemy_color = "mediumpurple";
+        board_color = "black";
+        score_color = "white";
+    }
+    else if (color_theme == 3) {
+        color_theme = 4;
+        snake_color = "darkkhaki";
+        regular_food_color = "ghostwhite";
+        special_food_color = "chocolate";
+        enemy_color = "seagreen";
+        board_color = "black";
+        score_color = "white";
+
+    }
+    else if (color_theme == 4) {
+        color_theme = 1;
+        snake_color = "lime";
+        regular_food_color = "red";
+        special_food_color = "yellow";
+        enemy_color = "steelblue";
+        board_color = "black";
+        score_color = "white";
+    }
     updateButtons();
 }
 
@@ -382,6 +428,7 @@ function updateButtons() {
     document.getElementById("snake-speed-button").innerHTML = "Game Speed: " + speedSetting;
     document.getElementById("snake-food-button").innerHTML = "Special Food: " + specialFoodSetting;
     document.getElementById("snake-enemy-button").innerHTML = "Enemies: " + enemySetting;
+    document.getElementById("snake-color-button").innerHTML = "Color Theme: " + color_theme;
     document.getElementById("snake-sound-button").innerHTML = "Sound Effects: " + soundSetting;
     if (bgmSetting == 0) {
         document.getElementById("snake-bgm-button").innerHTML = "BGM: Off";

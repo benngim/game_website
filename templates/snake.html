@@ -32,12 +32,11 @@
             <canvas class="snake-game-board" id="snake-board"></canvas>
             <div class="snake-game-info">
                 <h1>Instructions: </h1>
-                <p style="text-align: left;">
+                <p>
                     This game uses a WASD control scheme.
-                    Control the snake and try to eat as much food as you can, but
-                    make sure to stay within the board and not eat yourself though! 
+                    Control the snake to eat as much food as you can. Eating special foods will give extra points.
+                    Make sure to stay within the board, avoid any enemies and not eat yourself though! 
                 </p>
-                <hr class="hidden-divider">
                 <hr class="hidden-divider">
                 <h1>Settings: </h1>
                 <div class="snake-button-container">
@@ -47,6 +46,8 @@
                     <button class="snake-button" id="snake-food-button" onclick="toggleFoodSetting(); blur();"></button>
                     <hr class="hidden-divider">
                     <button class="snake-button" id="snake-enemy-button" onclick="toggleEnemySetting(); blur();"></button>
+                    <hr class="hidden-divider">
+                    <button class="snake-button" id="snake-color-button" onclick="toggleColorTheme(); blur();"></button>
                     <hr class="hidden-divider">
                     <button class="snake-button" id="snake-sound-button" onclick="toggleSoundSetting(); blur();"></button>
                     <hr class="hidden-divider">
