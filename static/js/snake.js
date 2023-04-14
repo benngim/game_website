@@ -17,6 +17,8 @@ var snakeBody;
 // Food variables
 var foodX;
 var foodY;
+var specialFoodX;
+var specialFoodY;
 var specialFood = false;
 var specialFoodSetting = "Off";
 
@@ -166,8 +168,11 @@ function placeFood() {
     // Generates food at random coordinates
     foodX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
     foodY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
-    // Determines if food is special
+
+    // Determines if special food is generated
     if (Math.floor(Math.random()*10) >= 9 && specialFoodSetting == "On") {
+        specialFoodX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
+        specialFoodY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
         specialFood = true;
     }
     else {
@@ -176,15 +181,22 @@ function placeFood() {
 }
 
 function checkFoodCollision() {
-    // Check if the snake ate the food
+    // Check if the snake ate regular food
     if (snakeX == foodX && snakeY == foodY) {
         if (soundSetting == "On") {
             eatSound.play();
         }
         score++;
-        if (specialFood) {
-            score += 2;
+        snakeBody.push([snakeX - velocityX, snakeY - velocityY])
+        placeFood();
+        placeEnemies();
+    }
+    // Check if the snake ate special food
+    if (snakeX == specialFoodX && snakeY == specialFoodY && specialFood) {
+        if (soundSetting == "On") {
+            eatSound.play();
         }
+        score+= 3;
         snakeBody.push([snakeX - velocityX, snakeY - velocityY])
         placeFood();
         placeEnemies();
@@ -194,12 +206,16 @@ function checkFoodCollision() {
 function updateFood() {
     // Draws food
     context.fillStyle = regular_food_color;
-    if (specialFood) {
-        context.fillStyle = special_food_color;
-    }
     context.beginPath();
     context.arc(foodX+BLOCKSIZE/2, foodY+BLOCKSIZE/2, BLOCKSIZE/2, 0, 2*Math.PI);
     context.fill();
+
+    if (specialFood) {
+        context.fillStyle = special_food_color;
+        context.beginPath();
+        context.arc(specialFoodX+BLOCKSIZE/2, specialFoodY+BLOCKSIZE/2, BLOCKSIZE/2, 0, 2*Math.PI);
+        context.fill();
+    }
 }
 
 function placeEnemies() {
@@ -216,7 +232,8 @@ function placeEnemies() {
         var enemyY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
 
         // Ensure enemy is not spawned on food location or in path of snake head
-        while ((enemyX == foodX && enemyY == foodY) || (enemyX == snakeX) || (enemyY == snakeY)) {
+        while ((enemyX == foodX && enemyY == foodY) || (enemyX == snakeX) || (enemyY == snakeY) 
+        || (specialFood && enemyX == specialFoodX && enemyY == specialFoodY)) {
             enemyX = Math.floor(Math.random() * COLS) * BLOCKSIZE;
             enemyY = Math.floor(Math.random() * ROWS) * BLOCKSIZE;
         }
