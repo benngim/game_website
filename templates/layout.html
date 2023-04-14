@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <title>My Website - {% block title %} {% endblock %}</title>
+        <link rel="stylesheet" href="/static/styles.css">
+        {% block head %} {% endblock %}
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <header>
+            <div class="nav-bar">
+                <ul>
+                    <li><a {% block navbar_home %} {% endblock %} href="/"><img src="/static/icons/home-icon-silhouette-svgrepo-com.svg"></a></li>
+                    <li><a {% block navbar_snake %} {% endblock %} href="/snake">Snake</a></li>
+                    <li><a {% block pg2 %} {% endblock %} href="/">TBA</a></li>
+                    <li><a {% block pg3 %} {% endblock %} href="/">TBA</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- Body -->
+        {% block body %} {% endblock %}
+
+        <!-- Footer -->
+        <footer></footer>
+    </body>
+</html>

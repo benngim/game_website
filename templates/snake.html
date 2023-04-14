@@ -1,63 +1,45 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width">
-        <title>Snake</title>
-        <link rel="stylesheet" href="/static/styles.css">
-        <script src="/static/js/snake.js"></script>
-    </head>
-    <body>
-        <!-- Navigation Bar -->
-        <header>
-            <div class="nav-bar">
-                <ul>
-                    <li><a href="/"><img src="/static/icons/home-icon-silhouette-svgrepo-com.svg"></a></li>
-                    <li><a class="nav-bar-active" href="/snake">Snake</a></li>
-                    <li><a href="/">TBA</a></li>
-                    <li><a href="/">TBA</a></li>
-                </ul>
-            </div>
-        </header>
+{% block title %} Snake {% endblock %}
+{% block head %} 
+    <script src="/static/js/snake.js"></script> 
+{% endblock %}
 
-        <!-- Body -->
-        <div class="page-title">
-            <h1>Snake</h1>
-        </div>
+{% block navbar_snake %} class="nav-bar-active" {% endblock %}
 
-        <hr class="horizontal-divider">
+{% block body %} 
+    <div class="page-title">
+        <h1>Snake</h1>
+    </div>
 
-        <div class="snake-game">
-            <canvas class="snake-game-board" id="snake-board"></canvas>
-            <div class="snake-game-info">
-                <h1>Instructions: </h1>
-                <p>
-                    This game uses a WASD control scheme.
-                    Control the snake to eat as much food as you can. Eating special foods will give extra points.
-                    Make sure to stay within the board, avoid any enemies and not eat yourself though! 
-                </p>
+    <hr class="horizontal-divider">
+
+    <div class="snake-game">
+        <canvas class="snake-game-board" id="snake-board"></canvas>
+        <div class="snake-game-info">
+            <h1>Instructions: </h1>
+            <p>
+                This game uses a WASD control scheme.
+                Control the snake to eat as much food as you can. Eating special foods will give extra points.
+                Make sure to stay within the board, avoid any enemies and not eat yourself though! 
+            </p>
+            <hr class="hidden-divider">
+            <h1>Settings: </h1>
+            <div class="snake-button-container">
                 <hr class="hidden-divider">
-                <h1>Settings: </h1>
-                <div class="snake-button-container">
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-speed-button" onclick="toggleSpeedSetting(); blur();"></button>
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-food-button" onclick="toggleFoodSetting(); blur();"></button>
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-enemy-button" onclick="toggleEnemySetting(); blur();"></button>
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-color-button" onclick="toggleColorTheme(); blur();"></button>
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-sound-button" onclick="toggleSoundSetting(); blur();"></button>
-                    <hr class="hidden-divider">
-                    <button class="snake-button" id="snake-bgm-button" onclick="toggleBgmSetting(); blur();"></button>
-                </div>
+                <button class="snake-button" id="snake-speed-button" onclick="toggleSpeedSetting(); blur();"></button>
+                <hr class="hidden-divider">
+                <button class="snake-button" id="snake-food-button" onclick="toggleFoodSetting(); blur();"></button>
+                <hr class="hidden-divider">
+                <button class="snake-button" id="snake-enemy-button" onclick="toggleEnemySetting(); blur();"></button>
+                <hr class="hidden-divider">
+                <button class="snake-button" id="snake-color-button" onclick="toggleColorTheme(); blur();"></button>
+                <hr class="hidden-divider">
+                <button class="snake-button" id="snake-sound-button" onclick="toggleSoundSetting(); blur();"></button>
+                <hr class="hidden-divider">
+                <button class="snake-button" id="snake-bgm-button" onclick="toggleBgmSetting(); blur();"></button>
             </div>
         </div>
+    </div>
+{% endblock %}
 
-        <!-- Footer -->
-        <footer></footer>
-
-    </body>
-</html>
