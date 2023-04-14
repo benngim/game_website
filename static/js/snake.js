@@ -33,8 +33,17 @@ var updateGameInteralId;
 // Sound effects
 var soundSetting = "Off";
 var gameOverSound = new Audio("/static/sounds/gameover-sound.mp3");
+gameOverSound.volume = 0.2;
 var eatSound = new Audio("/static/sounds/eat-sound.mp3");
+eatSound.volume = 0.7;
 var clickSound = new Audio("/static/sounds/click-sound.mp3");
+clickSound.volume = 0.5;
+
+// Background Music
+var bgmSetting = 0;
+var bgm = new Audio();
+bgm.loop = true;
+bgm.volume = 0.5;
 
 window.onload = startGame;
 
@@ -250,6 +259,49 @@ function toggleSoundSetting() {
     updateButtons();
 }
 
+function toggleBgmSetting() {
+    if (bgmSetting == 0) {
+        bgm.src = "/static/bgm/clockTowerTheme.mp3";
+        bgm.play();
+        bgmSetting = 1;
+    }
+    else if (bgmSetting == 1) {
+        bgm.pause();
+        bgm.src = "/static/bgm/cookieTheme.mp3";
+        bgm.play();
+        bgmSetting = 2;
+    }
+    else if (bgmSetting == 2) {
+        bgm.pause();
+        bgm.src = "/static/bgm/electricFountainTheme.mp3";
+        bgm.play();
+        bgmSetting = 3;
+    }
+    else if (bgmSetting == 3) {
+        bgm.pause();
+        bgm.src = "/static/bgm/pacmanTheme.mp3";
+        bgm.play();
+        bgmSetting = 4;
+    }
+    else if (bgmSetting == 4) {
+        bgm.pause();
+        bgm.src = "/static/bgm/snakeTheme.mp3";
+        bgm.play();
+        bgmSetting = 5;
+    }
+    else if (bgmSetting == 5) {
+        bgm.pause();
+        bgm.src = "/static/bgm/swampTheme.mp3";
+        bgm.play();
+        bgmSetting = 6;
+    }
+    else if (bgmSetting == 6) {
+        bgm.pause();
+        bgmSetting = 0;
+    }
+    updateButtons();
+}
+
 function updateButtons() {
     if (soundSetting == "On") {
         clickSound.pause();
@@ -259,4 +311,10 @@ function updateButtons() {
     document.getElementById("snake-speed-button").innerHTML = "Game Speed: " + speedSetting;
     document.getElementById("snake-food-button").innerHTML = "Special Food: " + specialFoodSetting;
     document.getElementById("snake-sound-button").innerHTML = "Sound Effects: " + soundSetting;
+    if (bgmSetting == 0) {
+        document.getElementById("snake-bgm-button").innerHTML = "BGM: Off";
+    }
+    else {
+        document.getElementById("snake-bgm-button").innerHTML = "BGM: Theme " + bgmSetting;
+    }
 }
