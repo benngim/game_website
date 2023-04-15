@@ -179,6 +179,10 @@ footer {
     align-content: center;
 }
 
+.tictactoe-edge-tile {
+    width: calc(100%/3);
+}
+
 .tictactoe-tile-hrline {
     border-bottom: 3px solid black;
 }
