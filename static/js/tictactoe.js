@@ -42,7 +42,7 @@ function initialiseGame() {
     for (let i = 0; i < board.length; i++) {
         let tile = document.getElementById("tile-"+i);
         tile.innerHTML = " ";
-        tile.addEventListener("click", humanMove);
+        tile.addEventListener("click", makeMove);
     }
     document.getElementById("gamelog").innerHTML = " ";
 }
@@ -113,7 +113,7 @@ function getRandomMove() {
 }
 
 /* Action when a tile is clicked */
-function humanMove() {
+function makeMove() {
     /* Gameover or cpu move */
     if (gameover || !clickable) {
         return;
@@ -198,6 +198,10 @@ function checkWinner() {
 
 /* Check if game ended in tie */
 function checkTie() {
+    if (gameover) {
+        return;
+    }
+
     for (let i = 0; i < board.length; i++) {
         if (board[i] == " ") {
             return;
