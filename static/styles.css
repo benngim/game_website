@@ -150,8 +150,7 @@ footer {
     color: var(--navbar-text-color-hover);
 }
 
-/* Tictactoe game */
-
+/* Tictactoe Classes */
 .tictactoe-game {
     width: 85%;
     margin-left: auto;
@@ -168,6 +167,17 @@ footer {
     display: flex;
     flex-wrap: wrap;
     background-color: white;
+}
+
+.tictactoe-gamelog {
+    width: 100%;
+    background-color: white;
+    text-align: center;
+    align-content: center;
+    height: 4.5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    font-size: 2vw;
 }
 
 .tictactoe-tile {

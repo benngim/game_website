@@ -14,7 +14,7 @@ var player1_wincol = 'darkred';
 var player2_col = 'blue';
 var player2_wincol = 'darkblue';
 var board_color = 'black';
-var line_color = 'lime';
+var line_color = 'oldlace';
 
 /* Win Patterns of Board */
 var winpatterns = [
@@ -40,6 +40,7 @@ function initialiseGame() {
         tile.innerHTML = " ";
         tile.addEventListener("click", clickTile);
     }
+    document.getElementById("gamelog").innerHTML = "Player 1's Turn";
 }
 
 /* Action when a tile is clicked */
@@ -69,16 +70,22 @@ function clickTile() {
     this.style.color = current_color;
     this.innerHTML = curPlayer;
 
-    /* Check if current player won */
+    /* Check if current player won or if there is a tie */
     checkWinner();
+    checkTie();
+    if (gameover) {
+        return;
+    }
 
     /* Switch to next player */
     if (curPlayer == player1) {
         curPlayer = player2;
+        document.getElementById("gamelog").innerHTML = "Player 2's Turn";
     }
 
     else {
         curPlayer = player1;
+        document.getElementById("gamelog").innerHTML = "Player 1's Turn";
     }
 
 }
@@ -86,7 +93,6 @@ function clickTile() {
 /* Check for winner */
 function checkWinner() {
     for (let i = 0; i < winpatterns.length; i++) {
-        console.log("i = "+ i + " board: " + board[winpatterns[i][0]] + board[winpatterns[i][1]] + board[winpatterns[i][2]])
         if ((board[winpatterns[i][0]] == board[winpatterns[i][1]]) &&
             (board[winpatterns[i][1]] == board[winpatterns[i][2]]) &&
             (board[winpatterns[i][2]] == curPlayer)) {
@@ -94,9 +100,11 @@ function checkWinner() {
             var win_color;
             if (player1 == curPlayer) {
                 win_color = player1_wincol;
+                document.getElementById("gamelog").innerHTML = "Player 1 Wins";
             }
             else {
                 win_color = player2_wincol;
+                document.getElementById("gamelog").innerHTML = "Player 2 Wins";
             }
             document.getElementById("tile-"+[winpatterns[i][0]]).style.backgroundColor = win_color;
             document.getElementById("tile-"+[winpatterns[i][1]]).style.backgroundColor = win_color;
@@ -106,11 +114,25 @@ function checkWinner() {
     }
 }
 
+/* Check if game ended in tie */
+function checkTie() {
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] == " ") {
+            return;
+        }
+    }
+    gameover = true;
+    document.getElementById("gamelog").innerHTML = "Draw";
+    return;
+}
+
 /* Sets game color theme */
 function setTheme() {
     document.querySelectorAll('.tictactoe-tile, .tictactoe-board').forEach(tile => {
         tile.style.backgroundColor = board_color;
         tile.style.borderColor = line_color;
-    });        
+    }); 
+    document.getElementById("gamelog").style.backgroundColor = line_color;
+    document.getElementById("gamelog").style.color = board_color;
 }
 
