@@ -7,7 +7,7 @@ var gameover;
 var player1 = 'O';
 var player2 = 'X';
 var curPlayer = player1;
-var cpuMode = true;
+var cpuMode = false;
 var cpuPlayer;
 var clickable;
 
@@ -216,5 +216,21 @@ function setTheme() {
     }); 
     document.getElementById("gamelog").style.backgroundColor = line_color;
     document.getElementById("gamelog").style.color = board_color;
+}
+
+/* Toggle game mode */
+function toggleGameMode() {
+    if (!gameover) {
+        return;
+    }
+
+    if (cpuMode) {
+        cpuMode = false;
+        document.getElementById("tictactoe-mode-button").innerHTML = "Game Mode: Multiplayer";
+    }
+    else {
+        cpuMode = true;
+        document.getElementById("tictactoe-mode-button").innerHTML = "Game Mode: Vs CPU";
+    }
 }
 
