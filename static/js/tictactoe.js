@@ -7,6 +7,9 @@ var gameover;
 var player1 = 'O';
 var player2 = 'X';
 var curPlayer = player1;
+var cpuMode = true;
+var cpuPlayer;
+var clickable;
 
 /* Color variable */
 var player1_col = 'red';
@@ -32,18 +35,29 @@ window.onload = initialiseGame;
 /* Set up game board for new game */
 function initialiseGame() {
     gameover = true;
+    clickable = true;
     board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     setTheme();
 
     for (let i = 0; i < board.length; i++) {
         let tile = document.getElementById("tile-"+i);
         tile.innerHTML = " ";
-        tile.addEventListener("click", clickTile);
+        tile.addEventListener("click", humanMove);
     }
     document.getElementById("gamelog").innerHTML = " ";
 }
 
-/* Start new game */
+/* Start game based on game mode chosen */
+function startGame() {
+    if (cpuMode) {
+        playGameCPU();
+    }
+    else {
+        playGame();
+    }
+}
+
+/* Start new game against human player */
 function playGame() {
     if (!gameover) {
         return;
@@ -53,20 +67,65 @@ function playGame() {
     document.getElementById("gamelog").innerHTML = "Player 1's Turn";
 }
 
+/* Start new game against computer player */
+function playGameCPU() {
+    if (!gameover) {
+        return;
+    }
+    initialiseGame();
+    gameover = false;
+
+    // Sets cpu to random player
+    let cpuNumber = Math.floor(Math.random() * 2) + 1;
+    if (cpuNumber == 1) {
+        clickable = false;
+        cpuPlayer = player1;
+        document.getElementById("gamelog").innerHTML = "CPU's Turn";
+        setTimeout(cpuMove, 500);
+    }
+    else {
+        clickable = true;
+        cpuPlayer = player2;
+        document.getElementById("gamelog").innerHTML = "Player 1's Turn";
+    }
+}
+
+/* Cpu places a move */
+function cpuMove() {
+    clickable = true;
+    let tileid = getRandomMove();
+    tile = document.getElementById(tileid).click();
+}
+
+/* Chooses a random move from remaining valid moves */
+function getRandomMove() {
+    /* Get list of all valid moves */
+    let valid_moves = [];
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] == " ") {
+            valid_moves.push(i);
+        }
+    }
+
+    let move = valid_moves[Math.floor(Math.random() * valid_moves.length)];
+
+    return "tile-" + move;
+}
+
 /* Action when a tile is clicked */
-function clickTile() {
-    /* Gameover or game hasn't started */
-    if (gameover) {
+function humanMove() {
+    /* Gameover or cpu move */
+    if (gameover || !clickable) {
         return;
     }
 
+    clickable = false;
     let tilenum = this.id.split("-")[1];
 
     /* Tile is not empty */
     if (board[tilenum] != " ") {
         return;
     }
-
 
     /* Update board */
     board[tilenum] = curPlayer;
@@ -90,14 +149,27 @@ function clickTile() {
     /* Switch to next player */
     if (curPlayer == player1) {
         curPlayer = player2;
-        document.getElementById("gamelog").innerHTML = "Player 2's Turn";
+        if ((curPlayer == cpuPlayer) && cpuMode) {
+            document.getElementById("gamelog").innerHTML = "CPU's turn";
+            setTimeout(cpuMove, 500);
+        }
+        else {
+            document.getElementById("gamelog").innerHTML = "Player 2's Turn";
+            clickable = true;
+        }
     }
 
     else {
         curPlayer = player1;
-        document.getElementById("gamelog").innerHTML = "Player 1's Turn";
+        if ((curPlayer == cpuPlayer) && cpuMode) {
+            document.getElementById("gamelog").innerHTML = "CPU's turn";
+            setTimeout(cpuMove, 500);
+        }
+        else {
+            document.getElementById("gamelog").innerHTML = "Player 1's Turn";
+            clickable = true;
+        }
     }
-
 }
 
 /* Check for winner */
