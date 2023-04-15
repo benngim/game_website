@@ -31,7 +31,7 @@ window.onload = initialiseGame;
 
 /* Set up game board for new game */
 function initialiseGame() {
-    gameover = false;
+    gameover = true;
     board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     setTheme();
 
@@ -40,6 +40,16 @@ function initialiseGame() {
         tile.innerHTML = " ";
         tile.addEventListener("click", clickTile);
     }
+    document.getElementById("gamelog").innerHTML = " ";
+}
+
+/* Start new game */
+function playGame() {
+    if (!gameover) {
+        return;
+    }
+    initialiseGame();
+    gameover = false;
     document.getElementById("gamelog").innerHTML = "Player 1's Turn";
 }
 
