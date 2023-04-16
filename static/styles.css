@@ -100,11 +100,7 @@ footer {
     margin-bottom: 10px;
 }
 
-/* Homepage Classes */
-
-
-/* Snake Classes */
-.snake-game {
+.game-container {
     width: 85%;
     margin-left: auto;
     margin-right: auto;
@@ -112,13 +108,7 @@ footer {
     height: 85%;
 }
 
-.snake-game-board {
-    display: inline;
-    float: left;
-    width: 49%;
-}
-
-.snake-game-info {
+.game-info {
     display: inline;
     float: right;
     text-align: center;
@@ -126,7 +116,7 @@ footer {
     font-size: large;
 }
 
-.snake-button-container {
+.button-container {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -134,7 +124,7 @@ footer {
     justify-content: center;
 }
 
-.snake-button {
+.button {
     background-color: var(--primary-color);
     border: 1px solid var(--primary-color-border);
     font-size: 24px;
@@ -144,21 +134,23 @@ footer {
     width: 60%;
 }
 
-.snake-button:hover {
+.button:hover {
     cursor: pointer;
     background-color: var(--primary-color-hover);
     color: var(--navbar-text-color-hover);
 }
 
-/* Tictactoe Classes */
-.tictactoe-game {
-    width: 85%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 3%;
-    height: 85%;
+/* Homepage Classes */
+
+
+/* Snake Classes */
+.snake-game-board {
+    display: inline;
+    float: left;
+    width: 49%;
 }
 
+/* Tictactoe Classes */
 .tictactoe-board {
     display: inline;
     float: left;
@@ -199,36 +191,4 @@ footer {
 
 .tictactoe-tile-vrline {
     border-right: 3px solid black;
-}
-
-.tictactoe-game-info {
-    display: inline;
-    float: right;
-    text-align: center;
-    width: 49%;
-    font-size: large;
-}
-
-.tictactoe-button-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.tictactoe-button {
-    background-color: var(--primary-color);
-    border: 1px solid var(--primary-color-border);
-    font-size: 24px;
-    font-family: 'Courier New', Courier, monospace;
-    padding: 10px;
-    text-decoration: none;
-    width: 60%;
-}
-
-.tictactoe-button:hover {
-    cursor: pointer;
-    background-color: var(--primary-color-hover);
-    color: var(--navbar-text-color-hover);
 }
