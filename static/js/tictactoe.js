@@ -38,6 +38,7 @@ window.onload = initialiseGame;
 function initialiseGame() {
     gameover = true;
     clickable = true;
+    curPlayer = player1;
     board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     setTheme();
 
@@ -250,7 +251,7 @@ function makeMove() {
         var win_color;
         if (player1 == curPlayer) {
             win_color = player1_wincol;
-            if (player1 == cpuPlayer) {
+            if (cpuMode && (player1 == cpuPlayer)) {
                 document.getElementById("gamelog").innerHTML = "CPU Wins";
             }
             else {
@@ -259,7 +260,7 @@ function makeMove() {
         }
         else {
             win_color = player2_wincol;
-            if (player1 == cpuPlayer) {
+            if (cpuMode && (player1 == cpuPlayer)) {
                 document.getElementById("gamelog").innerHTML = "CPU Wins";
             }
             else {
