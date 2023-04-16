@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %} TicTacToe {% endblock %}
+{% block head %} 
+    <script src="/static/js/tictactoe.js"></script> 
+{% endblock %}
+
+{% block navbar_tictactoe %} class="nav-bar-active" {% endblock %}
+
+{% block body %} 
+    <div class="page-title">
+        <h1>Tic-Tac-Toe</h1>
+    </div>
+
+    <hr class="horizontal-divider">
+
+    <div class="tictactoe-game">
+        <div class="tictactoe-board">
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-tile-vrline" id="tile-0"></div>
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-tile-vrline" id="tile-1"></div>
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-edge-tile" id="tile-2"></div>
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-tile-vrline" id="tile-3"></div>
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-tile-vrline" id="tile-4"></div>
+            <div class="tictactoe-tile tictactoe-tile-hrline tictactoe-edge-tile" id="tile-5"></div>
+            <div class="tictactoe-tile tictactoe-tile-vrline" id="tile-6"></div>
+            <div class="tictactoe-tile tictactoe-tile-vrline" id="tile-7"></div>
+            <div class="tictactoe-tile tictactoe-edge-tile" id="tile-8"></div>
+            <div class="tictactoe-gamelog" id="gamelog"></div>
+        </div>
+
+        <div class="tictactoe-game-info">
+            <h1>Instructions: </h1>
+            <p>
+                Take turns clicking on the squares to try and get three in a row before your opponent does! 
+                Play either against a friend or the CPU.
+            </p>
+            <hr class="hidden-divider">
+            <div class="tictactoe-button-container">
+                <hr class="hidden-divider">
+                <button class="tictactoe-button" id="tictactoe-play-button" onclick="startGame(); blur();">New Game</button>
+                <hr class="hidden-divider">
+                <button class="tictactoe-button" id="tictactoe-mode-button" onclick="toggleGameMode(); blur();">Game Mode: Multiplayer</button>
+                <hr class="hidden-divider">
+                <button class="tictactoe-button" id="tictactoe-cpuLv-button" onclick="toggleCPULevel(); blur();">CPU Level: Normal</button>
+                <hr class="hidden-divider">
+                <button class="tictactoe-button" id="tictactoe-color-button" onclick="toggleTheme(); blur();">Color Theme: 1</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

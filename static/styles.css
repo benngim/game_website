@@ -149,3 +149,86 @@ footer {
     background-color: var(--primary-color-hover);
     color: var(--navbar-text-color-hover);
 }
+
+/* Tictactoe Classes */
+.tictactoe-game {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3%;
+    height: 85%;
+}
+
+.tictactoe-board {
+    display: inline;
+    float: left;
+    width: 49%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+}
+
+.tictactoe-gamelog {
+    width: 100%;
+    background-color: black;
+    text-align: center;
+    align-content: center;
+    height: 4.5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    font-size: 2vw;
+}
+
+.tictactoe-tile {
+    width: calc(100%/3 - 3px);
+    height: calc(100%/3 - 3px);
+    font-size: 13vw;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.tictactoe-edge-tile {
+    width: calc(100%/3);
+}
+
+.tictactoe-tile-hrline {
+    border-bottom: 3px solid black;
+}
+
+.tictactoe-tile-vrline {
+    border-right: 3px solid black;
+}
+
+.tictactoe-game-info {
+    display: inline;
+    float: right;
+    text-align: center;
+    width: 49%;
+    font-size: large;
+}
+
+.tictactoe-button-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tictactoe-button {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color-border);
+    font-size: 24px;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 10px;
+    text-decoration: none;
+    width: 60%;
+}
+
+.tictactoe-button:hover {
+    cursor: pointer;
+    background-color: var(--primary-color-hover);
+    color: var(--navbar-text-color-hover);
+}
