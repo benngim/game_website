@@ -13,6 +13,7 @@ var cpuPlayer;
 var clickable;
 
 /* Color variable */
+var theme = 1;
 var player1_col = 'red';
 var player1_wincol = 'darkred';
 var player2_col = 'blue';
@@ -335,6 +336,68 @@ function setTheme() {
     }); 
     document.getElementById("gamelog").style.backgroundColor = line_color;
     document.getElementById("gamelog").style.color = board_color;
+}
+
+/* Toggle color theme */
+function toggleTheme() {
+    if (!gameover) {
+        return;
+    }
+    if (theme == 1) {
+        theme = 2;
+        player1_col = 'lightblue';
+        player1_wincol = 'deepskyblue';
+        player2_col = 'burlywood';
+        player2_wincol = 'chocolate';
+        board_color = 'saddlebrown';
+        line_color = 'sandybrown';
+        document.getElementById("tictactoe-color-button").innerHTML = "Color Theme: 2";
+    }
+    else if (theme == 2) {
+        theme = 3;
+        player1_col = 'mediumpurple';
+        player1_wincol = 'purple';
+        player2_col = 'magenta';
+        player2_wincol = 'darkmagenta';
+        board_color = 'rebeccapurple';
+        line_color = 'pink';
+        document.getElementById("tictactoe-color-button").innerHTML = "Color Theme: 3";
+    }
+
+    else if (theme == 3) {
+        theme = 4;
+        player1_col = 'lightgreen';
+        player1_wincol = 'forestgreen';
+        player2_col = 'yellow';
+        player2_wincol = 'goldenrod';
+        board_color = 'darkgreen';
+        line_color = 'darkkhaki';
+        document.getElementById("tictactoe-color-button").innerHTML = "Color Theme: 4";
+    }
+
+    else if (theme == 4) {
+        theme = 5;
+        player1_col = 'steelblue';
+        player1_wincol = 'darkslategray';
+        player2_col = 'seashell';
+        player2_wincol = 'lightslategray';
+        board_color = 'aquamarine';
+        line_color = 'aliceblue';
+        document.getElementById("tictactoe-color-button").innerHTML = "Color Theme: 5";
+    }
+
+    else {
+        theme = 1;
+        player1_col = 'red';
+        player1_wincol = 'darkred';
+        player2_col = 'blue';
+        player2_wincol = 'darkblue';
+        board_color = 'black';
+        line_color = 'oldlace';
+        document.getElementById("tictactoe-color-button").innerHTML = "Color Theme: 1";
+    }
+
+    initialiseGame();
 }
 
 /* Toggle game mode */
