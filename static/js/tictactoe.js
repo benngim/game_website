@@ -8,6 +8,7 @@ var player1 = 'O';
 var player2 = 'X';
 var curPlayer = player1;
 var cpuMode = false;
+var cpuLv = 1;
 var cpuPlayer;
 var clickable;
 
@@ -93,9 +94,17 @@ function playGameCPU() {
 /* Cpu places a move */
 function cpuMove() {
     clickable = true;
-    /* let tileid = getRandomMove();*/
-    move = minimaxMove(3, true, board);
-    let tileid = "tile-" + move[1];
+    var tileid;
+
+    if (cpuLv == 0) {
+        tileid = getRandomMove();
+    }
+    else if (cpuLv == 1) {
+        tileid = "tile-" + minimaxMove(2, true, board)[1];
+    }
+    else if (cpuLv == 2) { 
+        tileid = "tile-" + minimaxMove(7, true, board)[1];
+    }
     tile = document.getElementById(tileid).click();
 }
 
@@ -235,15 +244,26 @@ function makeMove() {
     /* Check if current player won */
     let winner = checkWinner(board, curPlayer);
     if (winner >= 0) {
+        clickable = false;
         gameover = true;
         var win_color;
         if (player1 == curPlayer) {
             win_color = player1_wincol;
-            document.getElementById("gamelog").innerHTML = "Player 1 Wins";
+            if (player1 == cpuPlayer) {
+                document.getElementById("gamelog").innerHTML = "CPU Wins";
+            }
+            else {
+                document.getElementById("gamelog").innerHTML = "Player 1 Wins";
+            }
         }
         else {
             win_color = player2_wincol;
-            document.getElementById("gamelog").innerHTML = "Player 2 Wins";
+            if (player1 == cpuPlayer) {
+                document.getElementById("gamelog").innerHTML = "CPU Wins";
+            }
+            else {
+                document.getElementById("gamelog").innerHTML = "Player 2 Wins";
+            }
         }
         document.getElementById("tile-"+[winpatterns[winner][0]]).style.backgroundColor = win_color;
         document.getElementById("tile-"+[winpatterns[winner][1]]).style.backgroundColor = win_color;
@@ -253,6 +273,7 @@ function makeMove() {
 
     /* Check if there is a tie */
     if (checkTie(board)) {
+        clickable = false;
         gameover = true;
         document.getElementById("gamelog").innerHTML = "Draw";
         return;
@@ -329,6 +350,28 @@ function toggleGameMode() {
     else {
         cpuMode = true;
         document.getElementById("tictactoe-mode-button").innerHTML = "Game Mode: Vs CPU";
+    }
+}
+
+/* Toggle cpu difficulty */
+function toggleCPULevel() {
+    if (!gameover) {
+        return;
+    }
+
+    if (cpuLv == 0) {
+        cpuLv = 1;
+        document.getElementById("tictactoe-cpuLv-button").innerHTML = "CPU Level: Normal";
+    }
+
+    else if (cpuLv == 1) {
+        cpuLv = 2;
+        document.getElementById("tictactoe-cpuLv-button").innerHTML = "CPU Level: Unbeatable";
+    }
+
+    else {
+        cpuLv = 0;
+        document.getElementById("tictactoe-cpuLv-button").innerHTML = "CPU Level: Easy";
     }
 }
 
