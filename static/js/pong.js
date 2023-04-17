@@ -9,7 +9,7 @@ const PADDLE_SIZE = 3;
 var board;
 var context;
 var gameId;
-var gameOver = false;
+var gameOver = true;
 
 // Player variables
 var p1_x;
@@ -52,7 +52,7 @@ function initialiseGame() {
     // Initialise position variables
     p1_x = 2 * BLOCKSIZE;
     p1_y = (ROWS/2 - 2) * BLOCKSIZE;
-    p2_x = (COLS - 2) * BLOCKSIZE;
+    p2_x = (COLS - 3) * BLOCKSIZE;
     p2_y = (ROWS/2 - 2) * BLOCKSIZE;
 
     // Adds event listener for keyboard press and release
@@ -91,7 +91,7 @@ function drawGame() {
     // Draw paddles
     context.fillStyle = paddle_color;
     context.fillRect(p1_x + BLOCKSIZE/2, p1_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
-    context.fillRect(p2_x - BLOCKSIZE/2, p2_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
+    context.fillRect(p2_x, p2_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
 
     // Draw ball
     context.fillStyle = ball_color;
@@ -155,11 +155,45 @@ function updateBall() {
         ball_x += BALL_XSPEED;
     }
     ball_y += ball_ySpeed;
-    console.log(BALL_XSPEED, ball_ySpeed);
+}
+
+/* Checks for ball collision */
+function checkCollisions() {
+    // Check if ball hit p1 paddle
+    if ((ball_x >= (p1_x + BLOCKSIZE/2)) && (ball_x <= (p1_x + BLOCKSIZE))
+    && (ball_y >= p1_y) && ball_y <= (p1_y + BLOCKSIZE * PADDLE_SIZE)) {
+        ball_direction = "Right";
+        ball_ySpeed = -ball_ySpeed;
+    }
+
+    // Check if ball hit p1 paddle
+    if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
+    && (ball_y >= p2_y) && ball_y <= (p2_y + BLOCKSIZE * PADDLE_SIZE)) {
+        ball_direction = "Left";
+        ball_ySpeed = -ball_ySpeed;
+    }
+
+    // Check if ball hit vertical wall
+    if (ball_y < 0 || ball_y >= ROWS * BLOCKSIZE - BALLSIZE) {
+        ball_ySpeed = -ball_ySpeed;
+    }
+
+    // Check if ball hit p1 wall
+    if (ball_x < 0 - BALLSIZE) {
+        gameOver = true;
+    }
+    
+    // Check if ball hit p2 wall
+    if (ball_x >= COLS * BLOCKSIZE) {
+        gameOver = true;
+    }
 }
 
 /* Start game */
 function startGame() {
+    if (!gameOver) {
+        return;
+    }
     if (gameId != null) {
         cancelAnimationFrame(gameId);
     }
@@ -173,6 +207,7 @@ function startGame() {
 function playGame() {
     updatePaddles();
     updateBall();
+    checkCollisions();
     drawGame();
     if (!gameOver) {
         gameId = requestAnimationFrame(playGame);
