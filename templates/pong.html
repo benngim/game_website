@@ -14,12 +14,16 @@
 
     <hr class="horizontal-divider">
 
-    <div class="game-container">
+    <div style="height: auto;" class="game-container">
         <canvas id="pong-board" class="pong-board"></canvas>
-        <hr class="hidden-divider">
-        <hr class="hidden-divider">
-        <hr class="hidden-divider">
-        <hr class="hidden-divider">
+    </div>
+    <hr class="hidden-divider">
+    <hr class="horizontal-divider">
+    <hr class="hidden-divider">
+    <div style="margin-top: 0; height: auto;" class="game-container">
+        <div style="display: inline; float: left; text-align: center; width: 49%;" class="button-container">
+            <button class="button" id="pong-play-button" onclick="startGame(); blur();">Play Game</button>
+        </div>
         <div class="pong-game-info">
             <h1>Instructions: </h1>
             <p>
