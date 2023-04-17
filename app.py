@@ -16,5 +16,9 @@ def snake():
 def tictactoe():
     return render_template("tictactoe.html")
 
+@app.route("/pong")
+def pong():
+    return render_template("pong.html")
+
 if __name__=='__main__':
     app.run(debug = True)

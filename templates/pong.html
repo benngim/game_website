@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %} Pong {% endblock %}
+{% block head %} 
+    <script src="/static/js/pong.js"></script> 
+{% endblock %}
+
+{% block navbar_pong %} class="nav-bar-active" {% endblock %}
+
+{% block body %} 
+    <div class="page-title">
+        <h1>Pong</h1>
+    </div>
+
+    <hr class="horizontal-divider">
+
+    <div class="game-container">
+        <div class="game-info">
+            <h1>Instructions: </h1>
+            <p>
+                TBA
+            </p>
+            <hr class="hidden-divider">
+        </div>
+    </div>
+{% endblock %}
