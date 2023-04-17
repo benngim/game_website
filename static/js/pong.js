@@ -8,6 +8,7 @@ const COLS = 50;
 const PADDLE_SIZE = 3;
 var board;
 var context;
+var gameId;
 var gameOver = false;
 
 // Player variables
@@ -27,6 +28,9 @@ const controller = {
 // Ball variables
 var ball_x;
 var ball_y;
+var ball_direction;
+var ball_ySpeed;
+const BALL_XSPEED = 4;
 
 // Color theme
 var color_theme = 1;
@@ -50,8 +54,6 @@ function initialiseGame() {
     p1_y = (ROWS/2 - 2) * BLOCKSIZE;
     p2_x = (COLS - 2) * BLOCKSIZE;
     p2_y = (ROWS/2 - 2) * BLOCKSIZE;
-    ball_x = (COLS/2 + 1) * BLOCKSIZE;
-    ball_y = (ROWS/2 - 1) * BLOCKSIZE;
 
     // Adds event listener for keyboard press and release
     document.addEventListener("keydown", (e) => {
@@ -96,19 +98,20 @@ function drawGame() {
     context.fillRect(ball_x, ball_y, BALLSIZE, BALLSIZE);
 }
 
+// Moves player paddles
 function updatePaddles() {
     // Update paddle positions
     if (controller["KeyW"].pressed == true) {
-        p1_y += -1 * BLOCKSIZE/4;
+        p1_y += -1 * BLOCKSIZE/3;
     }
     if (controller["KeyS"].pressed == true) {
-        p1_y += BLOCKSIZE/4
+        p1_y += BLOCKSIZE/3;
     }
     if (controller["KeyI"].pressed == true) {
-        p2_y += -1 * BLOCKSIZE/4;
+        p2_y += -1 * BLOCKSIZE/3;
     }
     if (controller["KeyK"].pressed == true) {
-        p2_y += BLOCKSIZE/4;
+        p2_y += BLOCKSIZE/3;
     }
 
     // Ensure paddles don't go out of bound
@@ -126,18 +129,52 @@ function updatePaddles() {
     }
 }
 
-// Start game
+/* Generates new ball at center of screen with random velocity and direction */
+function generateBall() {
+    ball_ySpeed = 0;
+    while (ball_ySpeed == 0) {
+        ball_ySpeed = Math.floor(9*Math.random() - 4);
+    }
+    ball_x = (COLS/2) * BLOCKSIZE;
+    ball_y = (ROWS/2) * BLOCKSIZE;
+
+    if (Math.floor(2 * Math.random() + 1) == 1) {
+        ball_direction = "Left";
+    }
+    else {
+        ball_direction = "Right";
+    }
+}
+
+/* Updates ball position */
+function updateBall() {
+    if (ball_direction == "Left") {
+        ball_x += -1 * BALL_XSPEED;
+    }
+    else {
+        ball_x += BALL_XSPEED;
+    }
+    ball_y += ball_ySpeed;
+    console.log(BALL_XSPEED, ball_ySpeed);
+}
+
+/* Start game */
 function startGame() {
+    if (gameId != null) {
+        cancelAnimationFrame(gameId);
+    }
+    generateBall();
     initialiseGame();
     gameOver = false;
-    requestAnimationFrame(playGame);
+    gameId = requestAnimationFrame(playGame);
 }
 
 // Play game
 function playGame() {
     updatePaddles();
+    updateBall();
     drawGame();
     if (!gameOver) {
-        requestAnimationFrame(playGame);
+        gameId = requestAnimationFrame(playGame);
     }
 }
