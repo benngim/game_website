@@ -13,10 +13,16 @@ var gameOver = false;
 // Player variables
 var p1_x;
 var p1_y;
-var p1_velocity;
 var p2_x;
 var p2_y;
-var p2_velocity;
+
+// Movement variables
+const controller = {
+    "KeyW": {pressed: false}, // P1 Up
+    "KeyS": {pressed: false}, // P1 Down
+    "KeyI": {pressed: false}, // P2 Up
+    "KeyK": {pressed: false}, // P2 Down
+}
 
 // Ball variables
 var ball_x;
@@ -42,17 +48,23 @@ function initialiseGame() {
     // Initialise position variables
     p1_x = 2 * BLOCKSIZE;
     p1_y = (ROWS/2 - 2) * BLOCKSIZE;
-    p1_velocity = 0;
     p2_x = (COLS - 2) * BLOCKSIZE;
     p2_y = (ROWS/2 - 2) * BLOCKSIZE;
-    p2_velocity = 0;
     ball_x = (COLS/2 + 1) * BLOCKSIZE;
     ball_y = (ROWS/2 - 1) * BLOCKSIZE;
 
     // Adds event listener for keyboard press and release
-    document.addEventListener("keydown", respondKeyPress);
-    document.addEventListener("keyup", respondKeyUp);
-
+    document.addEventListener("keydown", (e) => {
+        if(controller[e.code]) {
+            controller[e.code].pressed = true;
+        }
+    });
+    document.addEventListener("keyup", (e) => {
+        if(controller[e.code]) {
+            controller[e.code].pressed = false;
+        }
+    });
+    
     // Draws game elements
     drawGame();
 }
@@ -84,41 +96,20 @@ function drawGame() {
     context.fillRect(ball_x, ball_y, BALLSIZE, BALLSIZE);
 }
 
-function respondKeyPress(e) {
-    if (gameOver) {
-        return;
-    }
-
-    // Move P1 Paddle
-    if (e.code == "KeyW") {
-        p1_velocity = -1;
-    }
-    else if (e.code == "KeyS") {
-        p1_velocity = 1;
-    }
-    // Move P2 Paddle
-    else if (e.code == "KeyI") {
-        p2_velocity = -1;
-    }
-    else if (e.code == "KeyK") {
-        p2_velocity = 1;
-    }
-}
-
-function respondKeyUp(e) {
-    // Stop paddle movement up key press is released
-    if (e.code == "KeyW" || e.code == "KeyS") {
-        p1_velocity = 0;
-    }
-    else if (e.code == "KeyI" || e.code == "KeyK") {
-        p2_velocity = 0;
-    }
-}
-
 function updatePaddles() {
     // Update paddle positions
-    p1_y += p1_velocity * BLOCKSIZE/4;
-    p2_y += p2_velocity * BLOCKSIZE/4;
+    if (controller["KeyW"].pressed == true) {
+        p1_y += -1 * BLOCKSIZE/4;
+    }
+    if (controller["KeyS"].pressed == true) {
+        p1_y += BLOCKSIZE/4
+    }
+    if (controller["KeyI"].pressed == true) {
+        p2_y += -1 * BLOCKSIZE/4;
+    }
+    if (controller["KeyK"].pressed == true) {
+        p2_y += BLOCKSIZE/4;
+    }
 
     // Ensure paddles don't go out of bound
     if (p1_y <= 0) {
