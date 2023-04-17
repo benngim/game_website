@@ -260,7 +260,7 @@ function makeMove() {
         }
         else {
             win_color = player2_wincol;
-            if (cpuMode && (player1 == cpuPlayer)) {
+            if (cpuMode && (player2 == cpuPlayer)) {
                 document.getElementById("gamelog").innerHTML = "CPU Wins";
             }
             else {
