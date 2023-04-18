@@ -33,8 +33,8 @@ const controller = {
 var ball_x;
 var ball_y;
 var ball_direction;
+var ball_xSpeed;
 var ball_ySpeed;
-const BALL_XSPEED = 4;
 
 // Color theme
 var color_theme = 1;
@@ -85,8 +85,19 @@ function drawGame() {
     context.fillStyle = board_color;
     context.fillRect(0, 0, board.width, board.height);
 
-    context.fillStyle = paddle_color;
-    context.fillRect(p1_x * BLOCKSIZE, p1_y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE * PADDLE_SIZE);
+    // Draw score
+    context.font = "45px Courier New";
+    context.fillStyle = net_color;
+    context.textAlign = "left";
+    context.fillText(p1Score, 20, 45);
+    context.textAlign = "right";
+    context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
+
+    // Display winner text on gameover
+    if (gameOver && winner != null) {
+        drawGameOver();
+        return;
+    }
 
     // Draw net
     context.strokeStyle = net_color;
@@ -105,38 +116,6 @@ function drawGame() {
     // Draw ball
     context.fillStyle = ball_color;
     context.fillRect(ball_x, ball_y, BALLSIZE, BALLSIZE);
-
-    // Draw score
-    context.font = "45px Courier New";
-    context.fillStyle = net_color;
-    context.textAlign = "left";
-    context.fillText(p1Score, 20, 45);
-    context.textAlign = "right";
-    context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
-
-    // Display winner text on gameover
-    if (gameOver && winner != null) {
-        // Clear net
-        context.strokeStyle = board_color;
-        context.setLineDash([board.height]);
-        context.lineWidth = BLOCKSIZE/5 - 1; 
-        context.beginPath();
-        context.moveTo((COLS/2) * BLOCKSIZE, 0);
-        context.lineTo((COLS/2) * BLOCKSIZE, ROWS * BLOCKSIZE);
-        context.stroke();
-
-        // Display winner
-        context.font = "64px Courier New";
-        context.fillStyle = ball_color;
-        context.textAlign = "center";
-        if (winner == 1) {
-            context.fillText("Player 1 Wins!", board.width/2, board.height/2);
-        }
-        else if (winner == 2) {
-            context.fillText("Player 2 Wins!", board.width/2, board.height/2);
-        }
-        
-    }
 }
 
 /* Moves player paddles */
@@ -172,9 +151,10 @@ function updatePaddles() {
 
 /* Generates new ball at center of screen with random velocity and direction */
 function generateBall() {
+    ball_xSpeed = 6;
     ball_ySpeed = 0;
     while (ball_ySpeed == 0) {
-        ball_ySpeed = Math.floor(9*Math.random() - 4);
+        ball_ySpeed = Math.floor(15*Math.random() - 7);
     }
     ball_x = (COLS/2) * BLOCKSIZE;
     ball_y = (ROWS/2) * BLOCKSIZE;
@@ -190,28 +170,33 @@ function generateBall() {
 /* Updates ball position */
 function updateBall() {
     if (ball_direction == "Left") {
-        ball_x += -1 * BALL_XSPEED;
+        ball_x += -1 * ball_xSpeed;
     }
     else {
-        ball_x += BALL_XSPEED;
+        ball_x += ball_xSpeed;
     }
     ball_y += ball_ySpeed;
 }
 
 /* Checks for ball collision */
 function checkCollisions() {
+
     // Check if ball hit p1 paddle
     if ((ball_x >= (p1_x + BLOCKSIZE/2)) && (ball_x <= (p1_x + BLOCKSIZE))
     && (ball_y >= p1_y) && ball_y <= (p1_y + BLOCKSIZE * PADDLE_SIZE)) {
+        while (ball_ySpeed == 0) {
+            ball_ySpeed = Math.floor(15*Math.random() - 7);
+        }
         ball_direction = "Right";
-        ball_ySpeed = -ball_ySpeed;
     }
 
-    // Check if ball hit p1 paddle
+    // Check if ball hit p2 paddle
     if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
     && (ball_y >= p2_y) && ball_y <= (p2_y + BLOCKSIZE * PADDLE_SIZE)) {
+        while (ball_ySpeed == 0) {
+            ball_ySpeed = Math.floor(15*Math.random() - 7);
+        }
         ball_direction = "Left";
-        ball_ySpeed = -ball_ySpeed;
     }
 
     // Check if ball hit vertical wall
@@ -276,6 +261,20 @@ function playGame() {
     drawGame();
     if (!gameOver) {
         gameId = requestAnimationFrame(playGame);
+    }
+}
+
+/* Render gameover screen */
+function drawGameOver() {
+    // Display winner
+    context.font = "64px Courier New";
+    context.fillStyle = ball_color;
+    context.textAlign = "center";
+    if (winner == 1) {
+        context.fillText("Player 1 Wins!", board.width/2, board.height/2);
+    }
+    else if (winner == 2) {
+        context.fillText("Player 2 Wins!", board.width/2, board.height/2);
     }
 }
 
