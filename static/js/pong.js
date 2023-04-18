@@ -12,6 +12,8 @@ var gameId;
 var gameOver = true;
 var p1Score;
 var p2Score;
+var scoreSetting = 3;
+var winner;
 
 // Player variables
 var p1_x;
@@ -111,6 +113,30 @@ function drawGame() {
     context.fillText(p1Score, 20, 45);
     context.textAlign = "right";
     context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
+
+    // Display winner text on gameover
+    if (gameOver && winner != null) {
+        // Clear net
+        context.strokeStyle = board_color;
+        context.setLineDash([board.height]);
+        context.lineWidth = BLOCKSIZE/5 - 1; 
+        context.beginPath();
+        context.moveTo((COLS/2) * BLOCKSIZE, 0);
+        context.lineTo((COLS/2) * BLOCKSIZE, ROWS * BLOCKSIZE);
+        context.stroke();
+
+        // Display winner
+        context.font = "64px Courier New";
+        context.fillStyle = ball_color;
+        context.textAlign = "center";
+        if (winner == 1) {
+            context.fillText("Player 1 Wins!", board.width/2, board.height/2);
+        }
+        else if (winner == 2) {
+            context.fillText("Player 2 Wins!", board.width/2, board.height/2);
+        }
+        
+    }
 }
 
 /* Moves player paddles */
@@ -208,7 +234,8 @@ function checkCollisions() {
 function updateScore(player) {
     if (player == 1) {
         p1Score += 1;
-        if (p1Score == 3) {
+        if (p1Score == scoreSetting) {
+            winner = 1;
             gameOver = true;
             return;
         }
@@ -216,7 +243,8 @@ function updateScore(player) {
     }
     else {
         p2Score += 1;
-        if (p2Score == 3) {
+        if (p2Score == scoreSetting) {
+            winner = 2;
             gameOver = true;
             return;
         }
@@ -248,5 +276,28 @@ function playGame() {
     drawGame();
     if (!gameOver) {
         gameId = requestAnimationFrame(playGame);
+    }
+}
+
+/* Change score setting */
+function toggleScoreSetting() {
+    if (!gameOver) {
+        return;
+    }
+    if (scoreSetting == 3) {
+        scoreSetting = 5;
+        document.getElementById("pong-score-button").innerHTML = "Score Setting: FT5";
+    }
+    else if (scoreSetting == 5) {
+        scoreSetting = 7;
+        document.getElementById("pong-score-button").innerHTML = "Score Setting: FT7";
+    }
+    else if (scoreSetting == 7) {
+        scoreSetting = 10;
+        document.getElementById("pong-score-button").innerHTML = "Score Setting: FT10";
+    }
+    else {
+        scoreSetting = 3;
+        document.getElementById("pong-score-button").innerHTML = "Score Setting: FT3";
     }
 }
