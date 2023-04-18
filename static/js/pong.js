@@ -22,7 +22,7 @@ var p2_x;
 var p2_y;
 
 // Survival mode variable
-var surivalMode = false;
+var survivalMode = false;
 
 // Movement variables
 const controller = {
@@ -94,7 +94,7 @@ function drawGame() {
     context.textAlign = "left";
     context.fillText(p1Score, 20, 45);
     // Don't draw 2p score if playing survival mode
-    if (!surivalMode) {
+    if (!survivalMode) {
         context.textAlign = "right";
         context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
     }
@@ -120,7 +120,7 @@ function drawGame() {
     context.fillRect(p2_x, p2_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
 
     // Survival Mode - Draw wall
-    if (surivalMode) {
+    if (survivalMode) {
         context.fillRect(p2_x, 0, BLOCKSIZE/2, board.height);
     }
 
@@ -172,7 +172,7 @@ function generateBall() {
     ball_y = (ROWS/2) * BLOCKSIZE;
 
     // Set random initial ball direction, set to left initially if survival mode
-    if (Math.floor(2 * Math.random() + 1) == 1 || surivalMode) {
+    if (Math.floor(2 * Math.random() + 1) == 1 || survivalMode) {
         ball_direction = "Left";
     }
     else {
@@ -201,7 +201,7 @@ function checkCollisions() {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
         ball_direction = "Right";
-        if (surivalMode) {
+        if (survivalMode) {
             updateScore(1);
         }
     }
@@ -232,7 +232,7 @@ function checkCollisions() {
     // Check if ball hit p1 wall
     if (ball_x < 0 - BALLSIZE) {
         // Game ends in survival mode
-        if (surivalMode) {
+        if (survivalMode) {
             winner = 3;
             gameOver = true;
             return;
@@ -251,7 +251,7 @@ function updateScore(player) {
     if (player == 1) {
         p1Score += 1;
         // Only update score if in surival mode
-        if (surivalMode) {
+        if (survivalMode) {
             return;
         }
 
@@ -307,7 +307,7 @@ function drawGameOver() {
     context.fillStyle = ball_color;
     context.textAlign = "center";
 
-    if (surivalMode) {
+    if (survivalMode) {
         context.fillText("Gameover!", board.width/2, board.height/2);
         return;
     }
@@ -348,12 +348,12 @@ function toggleGameMode() {
     if (!gameOver) {
         return;
     }
-    if (!surivalMode) {
-        surivalMode = true;
+    if (!survivalMode) {
+        survivalMode = true;
         document.getElementById("pong-mode-button").innerHTML = "Game Mode: Survival";
     }
     else {
-        surivalMode = false;
+        survivalMode = false;
         document.getElementById("pong-mode-button").innerHTML = "Game Mode: Multiplayer"
     }
     initialiseGame();
