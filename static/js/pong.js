@@ -21,6 +21,9 @@ var p1_y;
 var p2_x;
 var p2_y;
 
+// Survival mode variable
+var surivalMode = false;
+
 // Movement variables
 const controller = {
     "KeyW": {pressed: false}, // P1 Up
@@ -90,8 +93,11 @@ function drawGame() {
     context.fillStyle = net_color;
     context.textAlign = "left";
     context.fillText(p1Score, 20, 45);
-    context.textAlign = "right";
-    context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
+    // Don't draw 2p score if playing survival mode
+    if (!surivalMode) {
+        context.textAlign = "right";
+        context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
+    }
 
     // Display winner text on gameover
     if (gameOver && winner != null) {
@@ -112,6 +118,11 @@ function drawGame() {
     context.fillStyle = paddle_color;
     context.fillRect(p1_x + BLOCKSIZE/2, p1_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
     context.fillRect(p2_x, p2_y, BLOCKSIZE/2, BLOCKSIZE * PADDLE_SIZE);
+
+    // Survival Mode - Draw wall
+    if (surivalMode) {
+        context.fillRect(p2_x, 0, BLOCKSIZE/2, board.height);
+    }
 
     // Draw ball
     context.fillStyle = ball_color;
@@ -151,6 +162,7 @@ function updatePaddles() {
 
 /* Generates new ball at center of screen with random velocity and direction */
 function generateBall() {
+    // Set initial xspeed and random yspeed
     ball_xSpeed = 6;
     ball_ySpeed = 0;
     while (ball_ySpeed == 0) {
@@ -159,7 +171,8 @@ function generateBall() {
     ball_x = (COLS/2) * BLOCKSIZE;
     ball_y = (ROWS/2) * BLOCKSIZE;
 
-    if (Math.floor(2 * Math.random() + 1) == 1) {
+    // Set random initial ball direction, set to left initially if survival mode
+    if (Math.floor(2 * Math.random() + 1) == 1 || surivalMode) {
         ball_direction = "Left";
     }
     else {
@@ -181,18 +194,30 @@ function updateBall() {
 /* Checks for ball collision */
 function checkCollisions() {
 
-    // Check if ball hit p1 paddle
+    // Check if ball hit p1 paddle, update score if survival mode
     if ((ball_x >= (p1_x + BLOCKSIZE/2)) && (ball_x <= (p1_x + BLOCKSIZE))
     && (ball_y >= p1_y) && ball_y <= (p1_y + BLOCKSIZE * PADDLE_SIZE)) {
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
         ball_direction = "Right";
+        if (surivalMode) {
+            updateScore(1);
+        }
     }
 
     // Check if ball hit p2 paddle
     if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
     && (ball_y >= p2_y) && ball_y <= (p2_y + BLOCKSIZE * PADDLE_SIZE)) {
+        while (ball_ySpeed == 0) {
+            ball_ySpeed = Math.floor(15*Math.random() - 7);
+        }
+        ball_direction = "Left";
+    }
+
+    // Survival Mode - Check if ball hit wall
+    if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
+    && (ball_y >= 0) && ball_y <= (board.height)) {
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -206,6 +231,12 @@ function checkCollisions() {
 
     // Check if ball hit p1 wall
     if (ball_x < 0 - BALLSIZE) {
+        // Game ends in survival mode
+        if (surivalMode) {
+            winner = 3;
+            gameOver = true;
+            return;
+        }
         updateScore(2);
     }
 
@@ -219,6 +250,11 @@ function checkCollisions() {
 function updateScore(player) {
     if (player == 1) {
         p1Score += 1;
+        // Only update score if in surival mode
+        if (surivalMode) {
+            return;
+        }
+
         if (p1Score == scoreSetting) {
             winner = 1;
             gameOver = true;
@@ -270,6 +306,12 @@ function drawGameOver() {
     context.font = "64px Courier New";
     context.fillStyle = ball_color;
     context.textAlign = "center";
+
+    if (surivalMode) {
+        context.fillText("Gameover!", board.width/2, board.height/2);
+        return;
+    }
+
     if (winner == 1) {
         context.fillText("Player 1 Wins!", board.width/2, board.height/2);
     }
@@ -299,4 +341,20 @@ function toggleScoreSetting() {
         scoreSetting = 3;
         document.getElementById("pong-score-button").innerHTML = "Score Setting: FT3";
     }
+}
+
+/* Toggle game mode */
+function toggleGameMode() {
+    if (!gameOver) {
+        return;
+    }
+    if (!surivalMode) {
+        surivalMode = true;
+        document.getElementById("pong-mode-button").innerHTML = "Game Mode: Survival";
+    }
+    else {
+        surivalMode = false;
+        document.getElementById("pong-mode-button").innerHTML = "Game Mode: Multiplayer"
+    }
+    initialiseGame();
 }
