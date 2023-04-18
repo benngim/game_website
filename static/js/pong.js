@@ -1,6 +1,6 @@
 /* Implements Pong Game */
 
-// Board variables
+// Game variables
 const BLOCKSIZE = 25;
 const BALLSIZE = 15;
 const ROWS = 20;
@@ -10,6 +10,8 @@ var board;
 var context;
 var gameId;
 var gameOver = true;
+var p1Score;
+var p2Score;
 
 // Player variables
 var p1_x;
@@ -55,6 +57,10 @@ function initialiseGame() {
     p2_x = (COLS - 3) * BLOCKSIZE;
     p2_y = (ROWS/2 - 2) * BLOCKSIZE;
 
+    // Initialise score
+    p1Score = "";
+    p2Score = "";
+
     // Adds event listener for keyboard press and release
     document.addEventListener("keydown", (e) => {
         if(controller[e.code]) {
@@ -71,6 +77,7 @@ function initialiseGame() {
     drawGame();
 }
 
+/* Draws all game elements */
 function drawGame() {
     // Draw board
     context.fillStyle = board_color;
@@ -96,9 +103,17 @@ function drawGame() {
     // Draw ball
     context.fillStyle = ball_color;
     context.fillRect(ball_x, ball_y, BALLSIZE, BALLSIZE);
+
+    // Draw score
+    context.font = "45px Courier New";
+    context.fillStyle = net_color;
+    context.textAlign = "left";
+    context.fillText(p1Score, 20, 45);
+    context.textAlign = "right";
+    context.fillText(p2Score, COLS*BLOCKSIZE - 20, 45);
 }
 
-// Moves player paddles
+/* Moves player paddles */
 function updatePaddles() {
     // Update paddle positions
     if (controller["KeyW"].pressed == true) {
@@ -180,12 +195,32 @@ function checkCollisions() {
 
     // Check if ball hit p1 wall
     if (ball_x < 0 - BALLSIZE) {
-        gameOver = true;
+        updateScore(2);
     }
-    
+
     // Check if ball hit p2 wall
     if (ball_x >= COLS * BLOCKSIZE) {
-        gameOver = true;
+        updateScore(1);
+    }
+}
+
+/* Updates score and resests ball when player scores */
+function updateScore(player) {
+    if (player == 1) {
+        p1Score += 1;
+        if (p1Score == 3) {
+            gameOver = true;
+            return;
+        }
+        generateBall();
+    }
+    else {
+        p2Score += 1;
+        if (p2Score == 3) {
+            gameOver = true;
+            return;
+        }
+        generateBall();
     }
 }
 
@@ -199,11 +234,13 @@ function startGame() {
     }
     generateBall();
     initialiseGame();
+    p1Score = 0;
+    p2Score = 0;
     gameOver = false;
     gameId = requestAnimationFrame(playGame);
 }
 
-// Play game
+/* Play game */
 function playGame() {
     updatePaddles();
     updateBall();
