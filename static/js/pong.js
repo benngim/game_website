@@ -217,7 +217,7 @@ function checkCollisions() {
 
     // Survival Mode - Check if ball hit wall
     if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
-    && (ball_y >= 0) && ball_y <= (board.height)) {
+    && (ball_y >= 0) && ball_y <= (board.height) && survivalMode) {
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -356,5 +356,60 @@ function toggleGameMode() {
         survivalMode = false;
         document.getElementById("pong-mode-button").innerHTML = "Game Mode: Multiplayer"
     }
+    winner = null;
     initialiseGame();
+}
+
+function toggleColor() {
+    if (color_theme == 1) {
+        color_theme = 2;
+        paddle_color = "#0C0404";
+        ball_color = "#8E340b";
+        net_color = "#FCF9C2";
+        board_color = "#4E2728";
+        document.getElementById("pong-color-button").innerHTML = "Color: 2";
+    }
+    else if (color_theme == 2) {
+        color_theme = 3;
+        paddle_color = "#3A4928";
+        ball_color = "#907A48";
+        net_color = "#3B2E1E";
+        board_color = "#4B6B3C";
+        document.getElementById("pong-color-button").innerHTML = "Color: 3";
+    }
+    else if (color_theme == 3) {
+        color_theme = 4;
+        paddle_color = "#026EC9";
+        ball_color = "#5831A5";
+        net_color = "#F7FEE0";
+        board_color = "#96DEBF";
+        document.getElementById("pong-color-button").innerHTML = "Color: 4";
+    }
+    else if (color_theme == 4) {
+        color_theme = 5;
+        paddle_color = "#ED82A9";
+        ball_color = "#A18060";
+        net_color = "#CCCCCC";
+        board_color = "#815CAB";
+        document.getElementById("pong-color-button").innerHTML = "Color: 5";
+    }
+    else if (color_theme == 5) {
+        color_theme = 6;
+        paddle_color = "#F2BA29";
+        ball_color = "#354045";
+        net_color = "#17171C";
+        board_color = "#995C15";
+        document.getElementById("pong-color-button").innerHTML = "Color: 6";
+    }
+    else {
+        color_theme = 1;
+        paddle_color = "white";
+        ball_color = "steelblue";
+        net_color = "white";
+        board_color = "black";
+        document.getElementById("pong-color-button").innerHTML = "Color: 1";
+    }
+    if (gameOver) {
+        drawGame();
+    }
 }
