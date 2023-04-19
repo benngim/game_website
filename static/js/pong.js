@@ -46,6 +46,15 @@ var ball_color = "steelblue";
 var net_color = "white";
 var board_color = "black";
 
+// Sound effects
+var soundSetting = true;
+var pongSound = new Audio("/static/sounds/pong-sound.mp3");
+pongSound.volume = 0.5;
+var gameOverSound = new Audio("/static/sounds/gameover-sound.mp3");
+gameOverSound.volume = 0.2;
+var scoreSound = new Audio("/static/sounds/click-sound.mp3");
+scoreSound.volume = 0.2;
+
 
 window.onload = initialiseGame;
 
@@ -197,6 +206,11 @@ function checkCollisions() {
     // Check if ball hit p1 paddle, update score if survival mode
     if ((ball_x >= (p1_x + BLOCKSIZE/2)) && (ball_x <= (p1_x + BLOCKSIZE))
     && (ball_y >= p1_y) && ball_y <= (p1_y + BLOCKSIZE * PADDLE_SIZE)) {
+        if (soundSetting) {
+            pongSound.currentTime = 0.6;
+            pongSound.play();
+        }
+
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -209,6 +223,11 @@ function checkCollisions() {
     // Check if ball hit p2 paddle
     if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
     && (ball_y >= p2_y) && ball_y <= (p2_y + BLOCKSIZE * PADDLE_SIZE)) {
+        if (soundSetting) {
+            pongSound.currentTime = 0.6;
+            pongSound.play();
+        }
+
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -217,6 +236,11 @@ function checkCollisions() {
 
     // Survival Mode - Check if ball hit wall
     if ((ball_x >= (p2_x - BALLSIZE)) && (ball_y >= 0) && ball_y <= (board.height) && survivalMode) {
+        if (soundSetting) {
+            pongSound.currentTime = 0.6;
+            pongSound.play();
+        }
+        
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -232,6 +256,9 @@ function checkCollisions() {
     if (ball_x < 0 - BALLSIZE) {
         // Game ends in survival mode
         if (survivalMode) {
+            if (soundSetting) {
+                gameOverSound.play();
+            }
             winner = 3;
             gameOver = true;
             return;
@@ -255,18 +282,32 @@ function updateScore(player) {
         }
 
         if (p1Score == scoreSetting) {
+            if (soundSetting) {
+                gameOverSound.play();
+            }
             winner = 1;
             gameOver = true;
             return;
+        }
+        if (soundSetting) {
+            scoreSound.currentTime = 0.5;
+            scoreSound.play();
         }
         generateBall();
     }
     else {
         p2Score += 1;
         if (p2Score == scoreSetting) {
+            if (soundSetting) {
+                gameOverSound.play();
+            }
             winner = 2;
             gameOver = true;
             return;
+        }
+        if (soundSetting) {
+            scoreSound.currentTime = 0.5;
+            scoreSound.play();
         }
         generateBall();
     }
@@ -359,6 +400,19 @@ function toggleGameMode() {
     initialiseGame();
 }
 
+/* Toggle sound effects */
+function toggleSoundSetting() {
+    if (soundSetting) {
+        soundSetting = false;
+        document.getElementById("pong-sound-button").innerHTML = "Sound FX: Off";
+    }
+    else {
+        soundSetting = true;
+        document.getElementById("pong-sound-button").innerHTML = "Sound FX: On";
+    }
+}
+
+/* Toggle color */
 function toggleColor() {
     if (color_theme == 1) {
         color_theme = 2;
