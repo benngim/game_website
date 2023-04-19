@@ -121,7 +121,7 @@ function drawGame() {
 
     // Survival Mode - Draw wall
     if (survivalMode) {
-        context.fillRect(p2_x, 0, BLOCKSIZE/2, board.height);
+        context.fillRect(p2_x, 0, board.width, board.height);
     }
 
     // Draw ball
@@ -216,8 +216,7 @@ function checkCollisions() {
     }
 
     // Survival Mode - Check if ball hit wall
-    if ((ball_x >= (p2_x - BALLSIZE)) && (ball_x <= (p2_x + BLOCKSIZE/2 - BALLSIZE))
-    && (ball_y >= 0) && ball_y <= (board.height) && survivalMode) {
+    if ((ball_x >= (p2_x - BALLSIZE)) && (ball_y >= 0) && ball_y <= (board.height) && survivalMode) {
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
