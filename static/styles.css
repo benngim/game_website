@@ -30,7 +30,7 @@ html {
 }
 
 footer {
-    min-height: 20px;
+    min-height: 50px;
     margin-top: 2%;
     background-color: var(--background-color);
 }
@@ -191,4 +191,18 @@ footer {
 
 .tictactoe-tile-vrline {
     border-right: 3px solid black;
+}
+
+/* Pong Classes */
+.pong-board {
+    display: inline;
+    float: left;
+    width: 100%;
+}
+
+.pong-game-info {
+    display: inline;
+    text-align: center;
+    width: 50%;
+    font-size: large;
 }

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %} Pong {% endblock %}
+{% block head %} 
+    <script src="/static/js/pong.js"></script> 
+{% endblock %}
+
+{% block navbar_pong %} class="nav-bar-active" {% endblock %}
+
+{% block body %} 
+    <div class="page-title">
+        <h1>Pong</h1>
+    </div>
+
+    <hr class="horizontal-divider">
+
+    <div style="height: auto;" class="game-container">
+        <canvas id="pong-board" class="pong-board"></canvas>
+    </div>
+    <hr class="hidden-divider">
+    <hr class="horizontal-divider">
+    <hr class="hidden-divider">
+    <div style="margin-top: 0; height: auto;" class="game-container">
+        <div style="display: inline; float: left; text-align: center; width: 49%;" class="button-container">
+            <button class="button" id="pong-play-button" onclick="startGame(); blur();">Play Game</button>
+            <hr class="hidden-divider">
+            <button class="button" id="pong-score-button" onclick="toggleScoreSetting(); blur();">Score Setting: FT3</button>
+            <hr class="hidden-divider">
+            <button class="button" id="pong-mode-button" onclick="toggleGameMode(); blur();">Game Mode: Multiplayer</button>
+            <hr class="hidden-divider">
+            <button class="button" id="pong-color-button" onclick="toggleColor(); blur();">Color: 1</button>
+            <hr class="hidden-divider">
+            <button class="button" id="pong-sound-button" onclick="toggleSoundSetting(); blur();">Sound FX: On</button>
+        </div>
+        <div class="pong-game-info">
+            <h1>Instructions: </h1>
+            <p>
+                Play pong against your friend or see how long you can last in surival mode!
+                Player 1 uses W and S to move their paddle while Player 2 uses I and K.
+                Set what you want to play up to with the score setting.
+            </p>
+            <hr class="hidden-divider">
+        </div>
+    </div>
+{% endblock %}
