@@ -210,7 +210,7 @@ function checkCollisions() {
             pongSound.currentTime = 0.6;
             pongSound.play();
         }
-
+        ball_ySpeed = 0;
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -227,7 +227,7 @@ function checkCollisions() {
             pongSound.currentTime = 0.6;
             pongSound.play();
         }
-
+        ball_ySpeed = 0;
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
@@ -240,7 +240,7 @@ function checkCollisions() {
             pongSound.currentTime = 0.6;
             pongSound.play();
         }
-        
+        ball_ySpeed = 0;
         while (ball_ySpeed == 0) {
             ball_ySpeed = Math.floor(15*Math.random() - 7);
         }
