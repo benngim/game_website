@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %} Login {% endblock %}
+
+{% block navbar_login %} class="nav-bar-active" {% endblock %}
+
+{% block body %}
+    <hr class="hidden-divider"> 
+    <hr class="hidden-divider">
+    <div class="page-title">
+        <h1>Login</h1>
+    </div>
+
+    <hr class="horizontal-divider" style="width: 51%;"> 
+
+    <form class="form" action="/login" method="post" autocomplete="off">
+        <input class="input" type="text" name="username" placeholder="Enter Username" id="username" required>
+        <hr class="hidden-divider">
+        <input class="input" type="password" name="password" placeholder="Enter Password" id="password" required>
+        <hr class="hidden-divider">
+        <input class="button" type="submit" value="Login">
+    </form>
+    <hr class="hidden-divider">
+    <p class="form-redirect">Don't Have an Account? <a class="form-redirect-link" href="/">Register Here!</a></p>
+
+{% endblock %}

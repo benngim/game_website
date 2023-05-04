@@ -48,9 +48,9 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS games (
 def index():
     return render_template("index.html")
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-    return
+    return render_template("login.html")
 
 @app.route("/snake")
 def snake():
