@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %} Register {% endblock %}
+
+{% block navbar_register %} class="nav-bar-active" {% endblock %}
+
+{% block body %}
+    <hr class="hidden-divider"> 
+    <hr class="hidden-divider">
+    <div class="page-title">
+        <h1>Register</h1>
+    </div>
+
+    <hr class="horizontal-divider" style="width: 51%;"> 
+
+    <form class="form" action="/register" method="post" autocomplete="off">
+        <input class="input" type="text" name="username" placeholder="Enter Username" id="username" required>
+        <hr class="hidden-divider">
+        <input class="input" type="password" name="password" placeholder="Enter Password" id="password" required>
+        <hr class="hidden-divider">
+        <input class="input" type="email" name="email" placeholder="Enter Email" id="email" required>
+        <hr class="hidden-divider">
+        <input class="input" type="number" name="age" placeholder="Enter Age" id="age" required>
+        <hr class="hidden-divider">
+        <input class="input" type="text" name="country" placeholder="Enter Country" id="country" required>
+        <hr class="hidden-divider">
+        <input class="input" type="text" name="state" placeholder="Enter State" id="state" required>
+        <hr class="hidden-divider">
+        <input class="input" type="text" name="city" placeholder="Enter City" id="city" required>
+        <hr class="hidden-divider">
+        <input class="button" type="submit" value="Register">
+    </form>
+    <hr class="hidden-divider">
+    <p class="form-redirect">Already Have an Account? <a class="form-redirect-link" href="/login">Login Here!</a></p>
+
+{% endblock %}
