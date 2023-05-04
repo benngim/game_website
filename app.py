@@ -1,9 +1,15 @@
 # Flask app and routes
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, redirect, request, session
 import mysql.connector
+import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+
+# Secret Key
+load_dotenv()
+app.secret_key = os.getenv("SECRET_KEY")
 
 # Initialise Database
 mydb = mysql.connector.connect(
@@ -50,7 +56,30 @@ def index():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    status_msg = ""
+    # Login form submitted
+    if request.method == "POST" and "username" in request.form and "password" in request.form:
+        username = request.form["username"]
+        password = request.form["password"]
+        # Check if account is in database
+        mycursor.execute(
+            """SELECT * 
+            FROM accounts 
+            WHERE username = %s
+            AND password = %s""",
+            (username, password))
+        account = mycursor.fetchone()
+        # Account exists, log in and redirect to home page
+        if account:
+            session["loggedin"] = True
+            session["id"] = account["id"]
+            session["username"] = account["username"]
+            return redirect("/")
+        # Username and password doesn't match any account in database
+        else:
+            status_msg = "Incorrect username or password!"
+
+    return render_template("login.html", msg = status_msg)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():

@@ -106,11 +106,22 @@ footer {
     width: 85%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 3%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.form-msg {
+    text-align: center;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--secondary-color);
+    text-decoration: none;
+    width: 60%;
 }
 
 .input {
