@@ -73,6 +73,12 @@ footer {
     background-color: var(--secondary-color);
 }
 
+.nav-bar-usericon {
+    float: right;
+    border-right: none;
+    border-left: 2px solid var(--primary-color-border);
+}
+
 /* General Classes */
 .page-title {
     margin-top: 2%;

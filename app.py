@@ -55,6 +55,20 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS games (
 def index():
     return render_template("index.html")
 
+@app.route("/user")
+def user():
+    if "loggedin" in session:
+        return render_template("user.html", user=session["username"])
+    else:
+        return redirect("/login")
+
+@app.route("/logout")
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    return redirect("/")
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     status_msg = ""
@@ -75,7 +89,7 @@ def login():
             session["loggedin"] = True
             session["id"] = account["account_id"]
             session["username"] = account["username"]
-            return redirect("/")
+            return redirect("/user")
         # Username and password doesn't match any account in database
         else:
             status_msg = "Incorrect username or password!"
