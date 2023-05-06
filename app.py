@@ -266,8 +266,70 @@ def snake():
             
     return render_template("snake.html")
 
-@app.route("/tictactoe")
+@app.route("/tictactoe", methods=['GET', 'POST'])
 def tictactoe():
+    # Set game to tictactoe
+    mycursor.execute(
+        """SELECT *
+        FROM games
+        WHERE game_name = %s
+        """,
+        ("tictactoe", ))
+    game = mycursor.fetchone()
+    # Game is not yet in database
+    if not game:
+        mycursor.execute(
+            """INSERT INTO games VALUES
+            (NULL, %s, %s, NULL, NULL)
+            """,
+            ("tictactoe", 0))
+        mydb.commit()
+        mycursor.execute(
+            """SELECT *
+            FROM games
+            WHERE game_name = %s
+            """,
+            ("tictactoe", ))
+        game = mycursor.fetchone()
+    session["game_id"] = game["game_id"]
+
+    # Update info if user is logged in
+    if request.method ==  "POST" and "loggedin" in session:
+        # Check if user stat already exists, else create user stat
+        mycursor.execute(
+            """SELECT *
+            FROM userstats
+            WHERE game_id = %s
+            AND account_id = %s
+            """,
+            (session["game_id"], session["id"]))
+        userstat = mycursor.fetchone()
+        # Game is not yet in database
+        if not userstat:
+            mycursor.execute(
+                """INSERT INTO userstats VALUES
+                (NULL, %s, %s, %s, CURDATE(), %s)
+                """,
+                (session["game_id"], session["id"], 0, 0))
+            mydb.commit()
+            mycursor.execute(
+                """SELECT *
+                FROM userstats
+                WHERE game_id = %s
+                AND account_id = %s
+                """,
+                (session["game_id"], session["id"]))
+            userstat = mycursor.fetchone()
+
+        # Update userstat (no scoring in tictactoe)
+        mycursor.execute(
+            """UPDATE userstats
+            SET last_played = CURDATE(), times_played = times_played + 1
+            WHERE game_id = %s AND account_id = %s
+            """,
+            (session["game_id"], session["id"]))
+        mydb.commit()
+
     return render_template("tictactoe.html")
 
 @app.route("/pong")

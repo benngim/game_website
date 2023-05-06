@@ -270,6 +270,14 @@ function makeMove() {
         document.getElementById("tile-"+[winpatterns[winner][0]]).style.backgroundColor = win_color;
         document.getElementById("tile-"+[winpatterns[winner][1]]).style.backgroundColor = win_color;
         document.getElementById("tile-"+[winpatterns[winner][2]]).style.backgroundColor = win_color;
+        fetch("/tictactoe",
+        {
+            method: "POST",
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
         return;
     }
 
@@ -278,6 +286,14 @@ function makeMove() {
         clickable = false;
         gameover = true;
         document.getElementById("gamelog").innerHTML = "Draw";
+        fetch("/tictactoe",
+        {
+            method: "POST",
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
         return;
     }
 
