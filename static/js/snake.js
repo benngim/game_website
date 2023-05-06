@@ -290,6 +290,18 @@ function gameOverState() {
     context.font = "24px Courier New";
     context.fillText("Press 'space' to retry", board.width/2, board.height/2 + 32);
     updateScore();
+    fetch("/snake",
+    {
+        method: "POST",
+        body: JSON.stringify({
+            score: score
+        }),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+    })
+    .then(function(res) {console.log(res)})
     clearInterval(updateGameInteralId);
 }
 

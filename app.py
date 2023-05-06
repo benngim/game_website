@@ -48,7 +48,17 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS games (
     PRIMARY KEY (game_id),
     FOREIGN KEY (hs_account_id) REFERENCES accounts(account_id)
     )""")
-
+mycursor.execute("""CREATE TABLE IF NOT EXISTS userstats (
+    userstat_id INT NOT NULL AUTO_INCREMENT,
+    game_id INT NOT NULL,
+    account_id INT NOT NULL,
+    high_score INT NOT NULL,
+    last_played DATE NOT NULL,
+    times_played INT NOT NULL,
+    PRIMARY KEY (userstat_id),
+    FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+    FOREIGN KEY (game_id) REFERENCES games(game_id)
+    )""")
 
 # Website routes
 @app.route("/")
@@ -99,6 +109,7 @@ def login():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     status_msg = ""
+    # Register form submitted
     if request.method == "POST" and "username" in request.form and "password" in request.form\
     and "email" in request.form and "age" in request.form and "country" in request.form\
     and "state" in request.form and "city" in request.form:
@@ -117,14 +128,17 @@ def register():
             WHERE username = %s""",
             (username, ))
         account = mycursor.fetchone()
+        # Account already exists
         if account:
             status_msg = "Username is already taken!"
+        # Check email, age and username is valid
         elif not re.match(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}\b', email):
             status_msg = "Invalid email!"
         elif not re.match(r'[A-Za-z0-9]+', username):
             status_msg = "Username can only contain numbers or letters!"
         elif not re.match(r'[0-9]+', age):
             status_msg = "Please enter a valid age!"
+        # Create new account
         else:
             mycursor.execute(
                 """SELECT *
@@ -163,8 +177,93 @@ def register():
 
     return render_template("register.html", msg = status_msg)
 
-@app.route("/snake")
+@app.route("/snake", methods=['GET', 'POST'])
 def snake():
+    # Set game to snake
+    mycursor.execute(
+        """SELECT *
+        FROM games
+        WHERE game_name = %s
+        """,
+        ("snake", ))
+    game = mycursor.fetchone()
+    # Game is not yet in database
+    if not game:
+        mycursor.execute(
+            """INSERT INTO games VALUES
+            (NULL, %s, %s, NULL, NULL)
+            """,
+            ("snake", 0))
+        mydb.commit()
+        mycursor.execute(
+            """SELECT *
+            FROM games
+            WHERE game_name = %s
+            """,
+            ("snake", ))
+        game = mycursor.fetchone()
+    session["game_id"] = game["game_id"]
+
+    # Update info if user is logged in
+    if request.method ==  "POST" and "score" in request.json and "loggedin" in session:
+        # Check if user stat already exists, else create user stat
+        mycursor.execute(
+            """SELECT *
+            FROM userstats
+            WHERE game_id = %s
+            AND account_id = %s
+            """,
+            (session["game_id"], session["id"]))
+        userstat = mycursor.fetchone()
+        # Game is not yet in database
+        if not userstat:
+            mycursor.execute(
+                """INSERT INTO userstats VALUES
+                (NULL, %s, %s, %s, CURDATE(), %s)
+                """,
+                (session["game_id"], session["id"], 0, 0))
+            mydb.commit()
+            mycursor.execute(
+                """SELECT *
+                FROM userstats
+                WHERE game_id = %s
+                AND account_id = %s
+                """,
+                (session["game_id"], session["id"]))
+            userstat = mycursor.fetchone()
+
+        # Update userstat
+        if request.json["score"] > userstat["high_score"]:
+            high_score = request.json["score"]
+        else:
+            high_score = userstat["high_score"]
+        mycursor.execute(
+            """UPDATE userstats
+            SET high_score = %s, last_played = CURDATE(), times_played = times_played + 1
+            WHERE game_id = %s AND account_id = %s
+            """,
+            (high_score, session["game_id"], session["id"]))
+        mydb.commit()
+
+        # Update game stat
+        mycursor.execute(
+            """SELECT *
+            FROM games
+            WHERE game_id = %s
+            """,
+            (session["game_id"], ))
+        game = mycursor.fetchone()
+        # New high score achieved
+        if high_score > game["highest_score"]:
+            mycursor.execute(
+                """UPDATE games
+                SET highest_score = %s, hs_account_id = %s, hs_date = CURDATE()
+                WHERE game_id = %s
+                """,
+                (high_score, session["id"], session["game_id"])
+            )
+            mydb.commit()
+            
     return render_template("snake.html")
 
 @app.route("/tictactoe")
