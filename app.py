@@ -215,7 +215,7 @@ def snake():
             """,
             (session["game_id"], session["id"]))
         userstat = mycursor.fetchone()
-        # Game is not yet in database
+        # Userstat is not yet in database
         if not userstat:
             mycursor.execute(
                 """INSERT INTO userstats VALUES
@@ -304,7 +304,7 @@ def tictactoe():
             """,
             (session["game_id"], session["id"]))
         userstat = mycursor.fetchone()
-        # Game is not yet in database
+        # Userstat is not yet in database
         if not userstat:
             mycursor.execute(
                 """INSERT INTO userstats VALUES
@@ -332,8 +332,94 @@ def tictactoe():
 
     return render_template("tictactoe.html")
 
-@app.route("/pong")
+@app.route("/pong", methods=['GET', 'POST'])
 def pong():
+    # Set game to pong
+    mycursor.execute(
+        """SELECT *
+        FROM games
+        WHERE game_name = %s
+        """,
+        ("pong", ))
+    game = mycursor.fetchone()
+    # Game is not yet in database
+    if not game:
+        mycursor.execute(
+            """INSERT INTO games VALUES
+            (NULL, %s, %s, NULL, NULL)
+            """,
+            ("pong", 0))
+        mydb.commit()
+        mycursor.execute(
+            """SELECT *
+            FROM games
+            WHERE game_name = %s
+            """,
+            ("pong", ))
+        game = mycursor.fetchone()
+    session["game_id"] = game["game_id"]
+
+    # Update info if user is logged in
+    if request.method ==  "POST" and "score" in request.json and "mode" in request.json and "loggedin" in session:
+        # Check if user stat already exists, else create user stat
+        mycursor.execute(
+            """SELECT *
+            FROM userstats
+            WHERE game_id = %s
+            AND account_id = %s
+            """,
+            (session["game_id"], session["id"]))
+        userstat = mycursor.fetchone()
+        # Userstat is not yet in database
+        if not userstat:
+            mycursor.execute(
+                """INSERT INTO userstats VALUES
+                (NULL, %s, %s, %s, CURDATE(), %s)
+                """,
+                (session["game_id"], session["id"], 0, 0))
+            mydb.commit()
+            mycursor.execute(
+                """SELECT *
+                FROM userstats
+                WHERE game_id = %s
+                AND account_id = %s
+                """,
+                (session["game_id"], session["id"]))
+            userstat = mycursor.fetchone()
+
+        # Update userstat (only update high score if played in survival mode)
+        if request.json["score"] > userstat["high_score"] and request.json["mode"] == "survival":
+            high_score = request.json["score"]
+        else:
+            high_score = userstat["high_score"]
+        mycursor.execute(
+            """UPDATE userstats
+            SET high_score = %s, last_played = CURDATE(), times_played = times_played + 1
+            WHERE game_id = %s AND account_id = %s
+            """,
+            (high_score, session["game_id"], session["id"]))
+        mydb.commit()
+
+        # Update game stat if played in survival mode
+        if request.json["mode"] == "survival":
+            mycursor.execute(
+                """SELECT *
+                FROM games
+                WHERE game_id = %s
+                """,
+                (session["game_id"], ))
+            game = mycursor.fetchone()
+            # New high score
+            if high_score > game["highest_score"]:
+                mycursor.execute(
+                    """UPDATE games
+                    SET highest_score = %s, hs_account_id = %s, hs_date = CURDATE()
+                    WHERE game_id = %s
+                    """,
+                    (high_score, session["id"], session["game_id"])
+                )
+                mydb.commit()
+
     return render_template("pong.html")
 
 if __name__=='__main__':

@@ -261,6 +261,18 @@ function checkCollisions() {
             }
             winner = 3;
             gameOver = true;
+            fetch("/pong",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    score: p1Score,
+                    mode: "survival"
+                }),
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            })
             return;
         }
         updateScore(2);
@@ -285,6 +297,18 @@ function updateScore(player) {
             if (soundSetting) {
                 gameOverSound.play();
             }
+            fetch("/pong",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    score: p1Score,
+                    mode: "multiplayer"
+                }),
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            })
             winner = 1;
             gameOver = true;
             return;
@@ -301,6 +325,18 @@ function updateScore(player) {
             if (soundSetting) {
                 gameOverSound.play();
             }
+            fetch("/pong",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    score: p2Score,
+                    mode: "multiplayer"
+                }),
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            })
             winner = 2;
             gameOver = true;
             return;
