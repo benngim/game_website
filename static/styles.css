@@ -203,7 +203,14 @@ footer {
 }
 
 /* Homepage Classes */
-
+.website-stats {
+    font-size: large;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+}
 
 /* Snake Classes */
 .snake-game-board {

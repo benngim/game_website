@@ -10,4 +10,29 @@
     </div>
 
     <hr class="horizontal-divider">
+
+    <div class="website-stats">
+        <h1>Website Stats</h1>
+        <p>There are {{stat_1}} different games on our Website!</p>
+        <p>There are {{stat_2}} active users on our Website!</p>
+        {% for game in stat_3 %}
+        <p>
+            The highest score ever achieved in {{game.game_name}} is {{game.highest_score}}, 
+            achieved by {{game.username}} on {{game.hs_date}}
+        </p>
+        {% endfor %}
+        <p>There are {{stat_4}} users from Australia that play pong on our Website!</p>
+        <p>There are {{stat_5}} users playing pong from Australia but not Melbourne aged between 13 and 18</p>
+        <p>There are {{stat_6}} users age over 18 who have played snake at least 5 times but never tictactoe</p>
+        <p>
+            {{stat_7.username}} has the lowest score of {{stat_7.high_score}} in pong, 
+            having played {{stat_7.times_played}} times
+        </p>
+        {% for stat in stat_8 %}
+        <p>
+            {{stat.game_name}} has been played a total of {{stat.total_times_played}} times by {{stat.num_users}} different users, 
+            with the average high score being {{stat.avg_high_score}}
+        </p>
+        {% endfor %}
+    </div>
 {% endblock %}

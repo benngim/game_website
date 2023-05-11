@@ -19,7 +19,7 @@ mydb = mysql.connector.connect(
     password = ""
 )
 
-mycursor = mydb.cursor(dictionary=True)
+mycursor = mydb.cursor(dictionary=True, buffered=True)
 mycursor.execute("CREATE DATABASE IF NOT EXISTS websitedb")
 mycursor.execute("USE websitedb")
 mycursor.execute("""CREATE TABLE IF NOT EXISTS locations (
@@ -63,7 +63,113 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS userstats (
 # Website routes
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Get stats for website
+    # Number of games and number of users
+    mycursor.execute("SELECT COUNT(*) AS stat_1 FROM games")
+    stat_1 = mycursor.fetchone()['stat_1']
+    mycursor.execute("SELECT COUNT(*) AS stat_2 FROM accounts")
+    stat_2 = mycursor.fetchone()['stat_2']
+    # High scores for each game
+    mycursor.execute(
+        """
+        SELECT game_name, highest_score, hs_date, username
+        FROM games INNER JOIN accounts
+        ON games.hs_account_id = accounts.account_id
+        """)
+    stat_3 = mycursor.fetchall()
+    # Number of people who play pong that live in Australia
+    mycursor.execute(
+        """
+        SELECT COUNT(*) AS stat_4
+        FROM userstats INNER JOIN 
+            (SELECT account_id
+            FROM accounts INNER JOIN locations
+            WHERE accounts.location_id = locations.location_id
+            AND locations.country = 'australia') aus_accounts
+        ON userstats.account_id = aus_accounts.account_id
+        WHERE userstats.game_id IN 
+            (SELECT game_id FROM games WHERE game_name = 'pong')
+        """)
+    stat_4 = mycursor.fetchone()['stat_4']
+    # Number of people who play snake that live in Australia but not Melbourne and are aged between 13-18
+    mycursor.execute(
+        """
+        SELECT COUNT(*) AS stat_5
+        FROM userstats INNER JOIN
+            (SELECT account_id
+            FROM accounts
+            WHERE age BETWEEN 13 AND 18
+            AND location_id IN 
+                (SELECT location_id 
+                FROM locations
+                WHERE country = 'australia'
+                AND NOT city = 'melbourne')) accs
+        ON userstats.account_id = accs.account_id
+        WHERE userstats.game_id IN 
+            (SELECT game_id FROM games WHERE game_name = 'snake')
+        """
+    )
+    stat_5 = mycursor.fetchone()['stat_5']
+    # Number of people who played snake at least 5 times but never played tictactoe, aged over 18
+    mycursor.execute(
+        """
+        SELECT COUNT(*) AS stat_6
+        FROM accounts
+        WHERE age > 18
+        AND account_id IN
+            (SELECT account_id
+            FROM userstats
+            WHERE game_id IN
+                (SELECT game_id FROM games WHERE game_name = 'snake')
+            AND times_played >= 5)
+        AND NOT account_id IN
+            (SELECT account_id
+            FROM userstats
+            WHERE game_id IN
+                (SELECT game_id FROM games WHERE game_name = 'tictactoe'))
+        """
+    )
+    stat_6 = mycursor.fetchone()['stat_6']
+    # Person with the lowest score in pong (played at least once)
+    mycursor.execute(
+        """
+        SELECT username, high_score, times_played
+        FROM accounts INNER JOIN userstats
+        ON accounts.account_id = userstats.account_id
+        WHERE userstats.userstat_id IN
+            (SELECT userstat_id
+            FROM userstats
+            WHERE game_id IN
+                (SELECT game_id FROM games WHERE game_name = 'pong')
+            AND high_score IN
+                (SELECT MIN(high_score)
+                FROM userstats 
+                WHERE game_id IN
+                    (SELECT game_id FROM games WHERE game_name = 'pong')
+                AND times_played > 0
+                )
+            )
+        LIMIT 1
+        """
+    )
+    stat_7 = mycursor.fetchone()
+    # Average high score for each game in comparison to how many people have played it
+    mycursor.execute(
+        """
+        SELECT games.game_name, ROUND(AVG(userstats.high_score), 0) as avg_high_score, 
+        SUM(userstats.times_played) as total_times_played, COUNT(*) AS num_users
+        FROM accounts INNER JOIN userstats
+        ON accounts.account_id = userstats.account_id
+        INNER JOIN games
+        ON games.game_id = userstats.game_id
+        GROUP BY games.game_name
+        HAVING total_times_played > 0
+        """
+    )
+    stat_8 = mycursor.fetchall()
+
+    return render_template("index.html", stat_1=stat_1, stat_2=stat_2, stat_3=stat_3, stat_4=stat_4,
+    stat_5=stat_5, stat_6=stat_6, stat_7=stat_7, stat_8=stat_8)
 
 @app.route("/user")
 def user():
@@ -88,10 +194,12 @@ def login():
         password = request.form["password"]
         # Check if account is in database
         mycursor.execute(
-            """SELECT * 
+            """
+            SELECT * 
             FROM accounts 
             WHERE username = %s
-            AND password = %s""",
+            AND password = %s
+            """,
             (username, password))
         account = mycursor.fetchone()
         # Account exists, log in and redirect to home page
@@ -123,9 +231,11 @@ def register():
 
         # Check if account is already in database
         mycursor.execute(
-            """SELECT * 
+            """
+            SELECT * 
             FROM accounts 
-            WHERE username = %s""",
+            WHERE username = %s
+            """,
             (username, ))
         account = mycursor.fetchone()
         # Account already exists
@@ -141,33 +251,39 @@ def register():
         # Create new account
         else:
             mycursor.execute(
-                """SELECT *
+                """
+                SELECT *
                 FROM locations
                 WHERE country = %s
                 AND state = %s
-                AND city = %s""",
+                AND city = %s
+                """,
                 (country, state, city)
             )
             location = mycursor.fetchone()
             if not location:
                 mycursor.execute(
-                    """INSERT INTO locations VALUES
+                    """
+                    INSERT INTO locations VALUES
                     (NULL, %s, %s, %s)
                     """,
                     (country, state, city)
                 )
                 mydb.commit()
                 mycursor.execute(
-                    """SELECT *
+                    """
+                    SELECT *
                     FROM locations
                     WHERE country = %s
                     AND state = %s
-                    AND city = %s""",
+                    AND city = %s
+                    """,
                     (country, state, city)
                 )
                 location = mycursor.fetchone()
             mycursor.execute(
-                """INSERT INTO accounts VALUES
+                """
+                INSERT INTO accounts VALUES
                 (NULL, %s, %s, %s, %s, %s)
                 """,
                 (username, password, email, age, location["location_id"])
@@ -181,7 +297,8 @@ def register():
 def snake():
     # Set game to snake
     mycursor.execute(
-        """SELECT *
+        """
+        SELECT *
         FROM games
         WHERE game_name = %s
         """,
@@ -190,13 +307,15 @@ def snake():
     # Game is not yet in database
     if not game:
         mycursor.execute(
-            """INSERT INTO games VALUES
+            """
+            INSERT INTO games VALUES
             (NULL, %s, %s, NULL, NULL)
             """,
             ("snake", 0))
         mydb.commit()
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM games
             WHERE game_name = %s
             """,
@@ -208,7 +327,8 @@ def snake():
     if request.method ==  "POST" and "score" in request.json and "loggedin" in session:
         # Check if user stat already exists, else create user stat
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM userstats
             WHERE game_id = %s
             AND account_id = %s
@@ -218,13 +338,15 @@ def snake():
         # Userstat is not yet in database
         if not userstat:
             mycursor.execute(
-                """INSERT INTO userstats VALUES
+                """
+                INSERT INTO userstats VALUES
                 (NULL, %s, %s, %s, CURDATE(), %s)
                 """,
                 (session["game_id"], session["id"], 0, 0))
             mydb.commit()
             mycursor.execute(
-                """SELECT *
+                """
+                SELECT *
                 FROM userstats
                 WHERE game_id = %s
                 AND account_id = %s
@@ -238,7 +360,8 @@ def snake():
         else:
             high_score = userstat["high_score"]
         mycursor.execute(
-            """UPDATE userstats
+            """
+            UPDATE userstats
             SET high_score = %s, last_played = CURDATE(), times_played = times_played + 1
             WHERE game_id = %s AND account_id = %s
             """,
@@ -247,7 +370,8 @@ def snake():
 
         # Update game stat
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM games
             WHERE game_id = %s
             """,
@@ -256,7 +380,8 @@ def snake():
         # New high score achieved
         if high_score > game["highest_score"]:
             mycursor.execute(
-                """UPDATE games
+                """
+                UPDATE games
                 SET highest_score = %s, hs_account_id = %s, hs_date = CURDATE()
                 WHERE game_id = %s
                 """,
@@ -270,7 +395,8 @@ def snake():
 def tictactoe():
     # Set game to tictactoe
     mycursor.execute(
-        """SELECT *
+        """
+        SELECT *
         FROM games
         WHERE game_name = %s
         """,
@@ -279,13 +405,15 @@ def tictactoe():
     # Game is not yet in database
     if not game:
         mycursor.execute(
-            """INSERT INTO games VALUES
+            """
+            INSERT INTO games VALUES
             (NULL, %s, %s, NULL, NULL)
             """,
             ("tictactoe", 0))
         mydb.commit()
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM games
             WHERE game_name = %s
             """,
@@ -297,7 +425,8 @@ def tictactoe():
     if request.method ==  "POST" and "loggedin" in session:
         # Check if user stat already exists, else create user stat
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM userstats
             WHERE game_id = %s
             AND account_id = %s
@@ -307,13 +436,15 @@ def tictactoe():
         # Userstat is not yet in database
         if not userstat:
             mycursor.execute(
-                """INSERT INTO userstats VALUES
+                """
+                INSERT INTO userstats VALUES
                 (NULL, %s, %s, %s, CURDATE(), %s)
                 """,
                 (session["game_id"], session["id"], 0, 0))
             mydb.commit()
             mycursor.execute(
-                """SELECT *
+                """
+                SELECT *
                 FROM userstats
                 WHERE game_id = %s
                 AND account_id = %s
@@ -323,7 +454,8 @@ def tictactoe():
 
         # Update userstat (no scoring in tictactoe)
         mycursor.execute(
-            """UPDATE userstats
+            """
+            UPDATE userstats
             SET last_played = CURDATE(), times_played = times_played + 1
             WHERE game_id = %s AND account_id = %s
             """,
@@ -336,7 +468,8 @@ def tictactoe():
 def pong():
     # Set game to pong
     mycursor.execute(
-        """SELECT *
+        """
+        SELECT *
         FROM games
         WHERE game_name = %s
         """,
@@ -345,13 +478,15 @@ def pong():
     # Game is not yet in database
     if not game:
         mycursor.execute(
-            """INSERT INTO games VALUES
+            """
+            INSERT INTO games VALUES
             (NULL, %s, %s, NULL, NULL)
             """,
             ("pong", 0))
         mydb.commit()
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM games
             WHERE game_name = %s
             """,
@@ -363,7 +498,8 @@ def pong():
     if request.method ==  "POST" and "score" in request.json and "mode" in request.json and "loggedin" in session:
         # Check if user stat already exists, else create user stat
         mycursor.execute(
-            """SELECT *
+            """
+            SELECT *
             FROM userstats
             WHERE game_id = %s
             AND account_id = %s
@@ -373,13 +509,15 @@ def pong():
         # Userstat is not yet in database
         if not userstat:
             mycursor.execute(
-                """INSERT INTO userstats VALUES
+                """
+                INSERT INTO userstats VALUES
                 (NULL, %s, %s, %s, CURDATE(), %s)
                 """,
                 (session["game_id"], session["id"], 0, 0))
             mydb.commit()
             mycursor.execute(
-                """SELECT *
+                """
+                SELECT *
                 FROM userstats
                 WHERE game_id = %s
                 AND account_id = %s
@@ -393,7 +531,8 @@ def pong():
         else:
             high_score = userstat["high_score"]
         mycursor.execute(
-            """UPDATE userstats
+            """
+            UPDATE userstats
             SET high_score = %s, last_played = CURDATE(), times_played = times_played + 1
             WHERE game_id = %s AND account_id = %s
             """,
@@ -403,7 +542,8 @@ def pong():
         # Update game stat if played in survival mode
         if request.json["mode"] == "survival":
             mycursor.execute(
-                """SELECT *
+                """
+                SELECT *
                 FROM games
                 WHERE game_id = %s
                 """,
@@ -412,7 +552,8 @@ def pong():
             # New high score
             if high_score > game["highest_score"]:
                 mycursor.execute(
-                    """UPDATE games
+                    """
+                    UPDATE games
                     SET highest_score = %s, hs_account_id = %s, hs_date = CURDATE()
                     WHERE game_id = %s
                     """,
