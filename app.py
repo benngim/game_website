@@ -14,9 +14,9 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # Initialise Database
 mydb = mysql.connector.connect(
-    host = "127.0.0.1",
-    user = "root",
-    password = ""
+    host = os.getenv("HOST"),
+    user = os.getenv("USERDB"),
+    password = os.getenv("PASSWORD")
 )
 
 mycursor = mydb.cursor(dictionary=True, buffered=True)
