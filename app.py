@@ -20,8 +20,8 @@ mydb = mysql.connector.connect(
 )
 
 mycursor = mydb.cursor(dictionary=True, buffered=True)
-mycursor.execute("CREATE DATABASE IF NOT EXISTS websitedb")
-mycursor.execute("USE websitedb")
+mycursor.execute("CREATE DATABASE IF NOT EXISTS " + os.getenv("DBNAME"))
+mycursor.execute("USE " + os.getenv("DBNAME"))
 mycursor.execute("""CREATE TABLE IF NOT EXISTS locations (
     location_id INT NOT NULL AUTO_INCREMENT,
     country VARCHAR(100) NOT NULL,
