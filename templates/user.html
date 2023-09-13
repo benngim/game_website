@@ -10,7 +10,26 @@
     </div>
 
     <hr class="horizontal-divider">
-    <button class="button" onclick="window.location.href='/logout';">Logout</button>
+
+    <div class="game-container" style="height: 40%;">
+        <img class="user-icon-display" src="" onerror="this.src='static/icons/user-icon-svgrepo-com.svg';" alt="Profile Picture"/>
+        <div class="game-info" style="margin-right: 50px;">
+            <h1>User Stats:</h1>
+            {% for stat in stats %}
+            <p>
+                You've played {{stat.game_name}} {{stat.times_played}} times with a high score of {{stat.high_score}}!
+                Last played on {{stat.last_played}}
+            </p>
+            {% endfor %}
+
+            <hr class="hidden-divider">
+            <hr class="horizontal-divider">
+            <hr class="hidden-divider">
+            
+            <button class="button" onclick="window.location.href='/logout';">Logout</button>
+        </div>
+
+    </div>
 
 
 {% endblock %}

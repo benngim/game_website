@@ -174,7 +174,19 @@ def index():
 @app.route("/user")
 def user():
     if "loggedin" in session:
-        return render_template("user.html", user=session["username"])
+        mycursor.execute(
+            f"""
+            SELECT games.game_name, userstats.high_score, userstats.times_played, userstats.last_played
+            FROM accounts INNER JOIN userstats
+            ON accounts.account_id = userstats.account_id
+            INNER JOIN games
+            ON games.game_id = userstats.game_id
+            WHERE accounts.account_id = {session["id"]}
+            """
+        )
+        stats = mycursor.fetchall()
+
+        return render_template("user.html", user=session["username"], stats=stats)
     else:
         return redirect("/login")
 
